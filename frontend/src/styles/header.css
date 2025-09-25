@@ -1,0 +1,23 @@
+.App-header {
+  width: 100%;
+  height: 120px;
+  background-color: #F08982;
+  display: flex;
+  align-items: center;
+}
+
+.App-logo {
+  width: 202px;
+  height: 106px;
+}
+
+.Web-border {
+  width: 1380px;
+  margin: 0 auto;
+}
+
+.App-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+}
