@@ -1,40 +1,35 @@
-const express = require('express');
-const cors = require('cors');
-const db = require('./db');
-
+const express = require("express");
+const cors = require("cors");
+const authRoutes = require("./auth");
+const db = require("./db");
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/test-db', (req, res) => {
-  db.query('SELECT 1 + 1 AS result', (err, results) => {
-    if (err) {
-      console.error('Ошибка запроса:', err);
-      return res.status(500).json({ error: 'Ошибка запроса к БД' });
-    }
-    res.json({ success: true, result: results[0].result });
-  });
-});
+app.use("/auth", authRoutes);
 
-app.get('/api/users', (req, res) => {
-  db.query('SELECT * FROM users', (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+app.get("/search", (req, res) => {
+  const search = req.query.query;
+  if (!search) {
+    return res.json([]);
+  }
+
+  const sql = `
+    SELECT * FROM anime
+    WHERE title LIKE ? OR title_jp LIKE ? OR title_en LIKE ? OR alt_titles LIKE ?
+  `;
+  const values = [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`];
+
+  db.query(sql, values, (err, results) => {
+    if (err) {
+      console.error("Ошибка поиска:", err);
+      return res.status(500).json({ error: "Ошибка при поиске" });
+    }
     res.json(results);
   });
 });
 
-app.post('/api/users', (req, res) => {
-  const { username, email } = req.body;
-  db.query(
-    'INSERT INTO users (username, email) VALUES (?, ?)',
-    [username, email],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ id: result.insertId, username, email });
-    }
-  );
-});
-
 app.listen(3001, () => {
-  console.log('🚀 Бэкенд сервер запущен на http://localhost:3001');
+  console.log("🚀 Бэкенд сервер запущен на http://localhost:3001");
 });

@@ -1,9 +1,10 @@
 import React from "react";
 import logo from "../assests/logo/Logo.png";
 import SearchBar from "./SearchBar";
+import UsersLogo from "../assests/svg/users.svg";
 import "../styles/header.css";
 
-function Header() {
+function Header({ userLoggedIn, userAvatar, userName }) {
   const search = (text) => {
     console.log(text);
   };
@@ -14,6 +15,21 @@ function Header() {
         <div className="App-header-inner">
           <img src={logo} className="App-logo" alt="logo" />
           <SearchBar onSearch={search} />
+          <div className="Header-right">
+            <img src={UsersLogo} alt="Users-logo" className="Users-logo" />
+            <img
+              src={userAvatar || "https://via.placeholder.com/40"}
+              alt="User Avatar"
+              className="User-avatar"
+            />
+            {userLoggedIn && (
+              <div className="User-dropdown">
+                <button>Профиль</button>
+                <button>Настройки</button>
+                <button>Выйти</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

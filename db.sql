@@ -32,7 +32,7 @@ CREATE TABLE anime (
   episode_duration INT,
   release_date DATE,
   studio VARCHAR(255),
-  source VARCHAR(100), -- манга, ранобэ и т.п.
+  source VARCHAR(100),
   rating DECIMAL(3,2) DEFAULT 0.0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

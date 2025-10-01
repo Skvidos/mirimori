@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
+import "../styles/header.css";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     if (query.length < 2) {
       setResults([]);
+      setShowDropdown(false);
       return;
     }
-
-    console.log(query);
 
     const timeout = setTimeout(() => {
       fetch(`http://localhost:3001/search?query=${encodeURIComponent(query)}`)
         .then((res) => res.json())
-        .then((data) => setResults(data))
+        .then((data) => {
+          setResults(data);
+          setShowDropdown(true);
+        })
         .catch((err) => console.error("Ошибка поиска:", err));
     }, 300);
 
@@ -23,24 +27,35 @@ export default function SearchBar() {
   }, [query]);
 
   return (
-    <div className="relative w-80">
+    <div className="Searchbar-box relative">
       <input
         type="text"
-        className="w-full border rounded p-2"
-        placeholder="Введите запрос..."
+        className="Searchbar-input"
+        placeholder="Введите название аниме..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onFocus={() => query.length >= 2 && setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
       />
+      <div
+        className="Search-icon"
+        onClick={() =>
+          (window.location.href = `/search?query=${encodeURIComponent(query)}`)
+        }
+      ></div>
 
-      {results.length > 0 && (
-        <ul className="absolute top-full left-0 right-0 bg-white border rounded mt-1 shadow-lg z-10">
+      {showDropdown && results.length > 0 && (
+        <ul className="Searchbar-results">
           {results.map((item) => (
             <li
               key={item.id}
-              className="p-2 hover:bg-gray-200 cursor-pointer"
-              onClick={() => alert(`Открыть: ${item.title}`)}
+              className="Searchbar-item"
+              onClick={() => (window.location.href = `/anime/${item.id}`)}
             >
-              {item.title}
+              <span className="Searchbar-title">{item.title}</span>
+              {item.title_en && (
+                <span className="Searchbar-subtitle">({item.title_en})</span>
+              )}
             </li>
           ))}
         </ul>
