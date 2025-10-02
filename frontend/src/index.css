@@ -1,0 +1,33 @@
+@import url(../src/assests/fonts/fonts.css);
+
+body {
+  margin: 0;
+  font-family: "Bellota Text", cursive, sans-serif, "Open Sans", Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.Web-border {
+  width: 1380px;
+  margin: 0 auto;
+}
+
+.Title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+.Slider {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: 28px;
+}
