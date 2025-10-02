@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.Web-border {
+  width: 1380px;
+  margin: 0 auto;
+}
+
+.Title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+.Slider {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: 28px;
+}

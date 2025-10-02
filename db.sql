@@ -121,3 +121,16 @@ CREATE TABLE news (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE watched (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  anime_id INT NOT NULL,
+  status ENUM('watching','completed','on_hold','dropped','plan_to_watch') DEFAULT 'plan_to_watch',
+  episodes_watched INT DEFAULT 0,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (anime_id) REFERENCES anime(id)
+);
+
+
+

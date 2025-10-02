@@ -1,0 +1,27 @@
+.Slider-item {
+  width: 200px;
+}
+
+.Anime-title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.Anime-type {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1;
+  color: #787878;
+  margin-top: 5px;
+}
+
+.Main-new {
+  margin-bottom: 40px;
+}
