@@ -3,6 +3,8 @@ const cors = require("cors");
 const authRoutes = require("./auth");
 const db = require("./db");
 const app = express();
+const path = require("path");
+const multer = require("multer");
 
 app.use(cors());
 app.use(express.json());
@@ -30,24 +32,24 @@ app.get("/search", (req, res) => {
   });
 });
 
-app.get("/watched/:userId", (req, res) => {
-  const userId = req.params.userId;
+// app.get("/watched/:userId", (req, res) => {
+//   const userId = req.params.userId;
 
-  const sql = `
-    SELECT a.id, a.title, a.poster_url, w.status, w.episodes_watched
-    FROM watched w
-    JOIN anime a ON w.anime_id = a.id
-    WHERE w.user_id = ?
-  `;
+//   const sql = `
+//     SELECT a.id, a.title, a.poster_url, w.status, w.episodes_watched
+//     FROM watched w
+//     JOIN anime a ON w.anime_id = a.id
+//     WHERE w.user_id = ?
+//   `;
 
-  db.query(sql, [userId], (err, results) => {
-    if (err) {
-      console.error("Ошибка получения списка просмотренного:", err);
-      return res.status(500).json({ error: "Ошибка при получении данных" });
-    }
-    res.json(results);
-  });
-});
+//   db.query(sql, [userId], (err, results) => {
+//     if (err) {
+//       console.error("Ошибка получения списка просмотренного:", err);
+//       return res.status(500).json({ error: "Ошибка при получении данных" });
+//     }
+//     res.json(results);
+//   });
+// });
 
 app.post("/watched", (req, res) => {
   const { user_id, anime_id, status, episodes_watched } = req.body;
@@ -107,6 +109,39 @@ app.get("/anime/:id", (req, res) => {
     if (err) return res.status(500).json({ error: "Ошибка при получении аниме" });
     if (results.length === 0) return res.status(404).json({ error: "Аниме не найдено" });
     res.json(results[0]);
+  });
+});
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Настройка multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/posters");
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
+});
+const upload = multer({ storage });
+
+app.post("/anime/upload", upload.single("poster"), (req, res) => {
+  const { title, description, type, episodes_total, studio, source } = req.body;
+  const poster_url = `/uploads/posters/${req.file.filename}`;
+
+  const sql = `
+    INSERT INTO anime (title, description, poster, type, episodes_total, studio, source)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [title, description, poster_url, type, episodes_total, studio, source], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при добавлении аниме" });
+    }
+    res.json({ message: "Аниме добавлено", id: result.insertId });
   });
 });
 

@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Poster from "../assests/img/anime.png";
 
 function Slider({ title, items }) {
@@ -10,9 +9,13 @@ function Slider({ title, items }) {
         {items.length > 0 ? (
           items.map((anime) => (
             <div key={anime.id} className="Slider-item">
-              <Link to={`/anime/${anime.id}`}>
-                <img src={anime.poster_url || Poster} alt={anime.title} />
-              </Link>
+              <img
+                src={
+                  anime.poster ? `http://localhost:3001${anime.poster}` : Poster
+                }
+                alt={anime.title}
+                className="Anime-poster"
+              />
               <div className="Anime-title">{anime.title}</div>
               <div className="Anime-type">{anime.type || "TV"}</div>
             </div>
