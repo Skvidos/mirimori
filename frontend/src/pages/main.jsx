@@ -3,6 +3,7 @@ import "../styles/main.css";
 import Header from "../components/header";
 import NavBar from "../components/navBar";
 import Slider from "../components/slider";
+import PostNews from "../components/postNews";
 
 function Main() {
   const [newTitles, setNewTitles] = React.useState([]);
@@ -32,6 +33,11 @@ function Main() {
 
           <div className="Main-last">
             <Slider title="Последние просмотренные" items={lastWatched} />
+          </div>
+
+          <div className="Main-news">
+            <div className="Title">Новости</div>
+            <PostNews />
           </div>
         </div>
       </div>

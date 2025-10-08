@@ -10,9 +10,7 @@ function Slider({ title, items }) {
           items.map((anime) => (
             <div key={anime.id} className="Slider-item">
               <img
-                src={
-                  anime.poster ? `http://localhost:3001${anime.poster}` : Poster
-                }
+                src={anime.poster ? `${anime.poster}` : Poster}
                 alt={anime.title}
                 className="Anime-poster"
               />

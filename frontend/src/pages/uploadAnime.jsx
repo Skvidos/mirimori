@@ -4,9 +4,14 @@ import axios from "axios";
 function UploadAnime() {
   const [form, setForm] = useState({
     title: "",
+    title_jp: "",
+    title_en: "",
+    alt_titles: "",
     description: "",
     type: "TV",
     episodes_total: 0,
+    episodes_duration: 0,
+    release_date: 0,
     studio: "",
     source: "",
     poster: null,
@@ -43,6 +48,26 @@ function UploadAnime() {
         onChange={handleChange}
         required
       />
+      <input
+        type="text"
+        name="title_jp"
+        placeholder="Название на японском"
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="title_en"
+        placeholder="Название на английском"
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="alt_titles"
+        placeholder="Другие названия"
+        onChange={handleChange}
+      />
       <textarea
         name="description"
         placeholder="Описание"
@@ -52,6 +77,18 @@ function UploadAnime() {
         type="number"
         name="episodes_total"
         placeholder="Эпизодов"
+        onChange={handleChange}
+      />
+      <input
+        type="number"
+        name="episodes_duration"
+        placeholder="Длительность эпизода"
+        onChange={handleChange}
+      />
+      <input
+        type="date"
+        name="release_date"
+        placeholder="Дата выхода"
         onChange={handleChange}
       />
       <input
@@ -80,6 +117,7 @@ function UploadAnime() {
         accept="image/*"
         required
       />
+
       <button type="submit">Добавить аниме</button>
     </form>
   );

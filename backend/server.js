@@ -128,15 +128,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.post("/anime/upload", upload.single("poster"), (req, res) => {
-  const { title, description, type, episodes_total, studio, source } = req.body;
+  const { title, title_jp, title_en, alt_titles, description, type, episodes_total, episodes_duration, release_date, studio, source } = req.body;
   const poster_url = `/uploads/posters/${req.file.filename}`;
 
   const sql = `
-    INSERT INTO anime (title, description, poster, type, episodes_total, studio, source)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO anime (title, title_jp, title_en, alt_titles, description, poster, type, episodes_total,episode_duration, release_date, studio, source)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(sql, [title, description, poster_url, type, episodes_total, studio, source], (err, result) => {
+  db.query(sql, [title, title_jp, title_en, alt_titles, description, poster_url, type, episodes_total, episodes_duration, release_date, studio, source], (err, result) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: "Ошибка при добавлении аниме" });
