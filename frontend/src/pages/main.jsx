@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import "../styles/main.css";
 import Header from "../components/header";
+import Footer from "../components/footer";
 import NavBar from "../components/navBar";
 import Slider from "../components/slider";
 import PostNews from "../components/postNews";
@@ -65,6 +66,7 @@ function Main() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
