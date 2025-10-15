@@ -22,6 +22,13 @@
   margin-top: 5px;
 }
 
-.Main-new {
+.Main-new,
+.Main-last {
   margin-bottom: 40px;
+}
+
+.Anime-poster {
+  width: 200px;
+  height: 287px;
+  
 }

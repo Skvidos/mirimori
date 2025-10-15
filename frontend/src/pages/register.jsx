@@ -1,22 +1,40 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (!username || !email || !password) {
+      setMessage("Заполните все поля!");
+      return;
+    }
+
     try {
-      const res = await fetch("http://localhost:3000/register", {
+      const res = await fetch("http://localhost:3001/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, email, password }),
       });
+
       const data = await res.json();
-      setMessage(data.message);
+
+      if (res.ok) {
+        setMessage("Регистрация успешна! Перенаправление на страницу входа...");
+        setTimeout(() => navigate("/login"), 1500);
+      } else {
+        setMessage(data.error || "Ошибка при регистрации");
+      }
     } catch (err) {
-      setMessage("Ошибка сервера");
+      console.error(err);
+      setMessage("Ошибка соединения с сервером");
     }
   };
 
@@ -26,9 +44,16 @@ function Register() {
       <form onSubmit={handleRegister} style={styles.form}>
         <input
           type="text"
-          placeholder="Логин"
+          placeholder="Имя пользователя"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          style={styles.input}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           style={styles.input}
         />
         <input
@@ -42,16 +67,16 @@ function Register() {
           Зарегистрироваться
         </button>
       </form>
-      <p style={styles.message}>{message}</p>
+      {message && <p style={styles.message}>{message}</p>}
     </div>
   );
 }
 
 const styles = {
   container: {
-    maxWidth: "300px",
+    maxWidth: "320px",
     margin: "100px auto",
-    padding: "20px",
+    padding: "25px",
     border: "1px solid #ccc",
     borderRadius: "10px",
     textAlign: "center",
@@ -72,8 +97,9 @@ const styles = {
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
+    fontWeight: "bold",
   },
-  message: { marginTop: "10px", color: "red" },
+  message: { marginTop: "10px", color: "#333", fontSize: "14px" },
 };
 
 export default Register;
