@@ -9,7 +9,7 @@ const multer = require("multer");
 app.use(cors());
 app.use(express.json());
 
-app.use("/auth", authRoutes);
+app.use("/api", authRoutes);
 
 app.get("/search", (req, res) => {
   const search = req.query.query;

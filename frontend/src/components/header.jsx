@@ -9,6 +9,7 @@ function Header({ userLoggedIn, userAvatar, userName }) {
   const search = (text) => {
     console.log(text);
   };
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   return (
     <header className="App-header">
@@ -17,18 +18,36 @@ function Header({ userLoggedIn, userAvatar, userName }) {
           <img src={logo} className="App-logo" alt="logo" />
           <SearchBar onSearch={search} />
           <div className="Header-right">
-            <img src={UsersLogo} alt="Users-logo" className="Users-logo" />
-            <img
-              src={userAvatar || userAvatarPlaceholder}
-              alt="User Avatar"
-              className="User-avatar"
-            />
-            {userLoggedIn && (
-              <div className="User-dropdown">
-                <button>Профиль</button>
-                <button>Настройки</button>
-                <button>Выйти</button>
+            <img src={UsersLogo} alt="Users Logo" className="Users-logo" />
+            {userLoggedIn ? (
+              <div className="User-block" style={{ position: "relative" }}>
+                <img
+                  src={userAvatar || userAvatarPlaceholder}
+                  alt="User Avatar"
+                  className="User-avatar"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  style={{ cursor: "pointer" }}
+                />
+
+                {dropdownOpen && (
+                  <div className="User-dropdown">
+                    <button>Профиль</button>
+                    <button>Настройки</button>
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        window.location.reload();
+                      }}
+                    >
+                      Выйти
+                    </button>
+                  </div>
+                )}
               </div>
+            ) : (
+              <a href="/login" className="Login-button">
+                Войти
+              </a>
             )}
           </div>
         </div>

@@ -1,26 +1,32 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/login", {
+      const res = await fetch("http://localhost:3001/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
+
       if (data.token) {
         localStorage.setItem("token", data.token);
-        setMessage("Успешный вход!");
+        setMessage("Вход успешен!");
+
+        setTimeout(() => navigate("/"), 1000);
       } else {
-        setMessage(data.message);
+        setMessage(data.error || data.message || "Ошибка входа");
       }
     } catch (err) {
+      console.error(err);
       setMessage("Ошибка сервера");
     }
   };
@@ -30,10 +36,10 @@ function Login() {
       <h2>Вход</h2>
       <form onSubmit={handleLogin} style={styles.form}>
         <input
-          type="text"
-          placeholder="Логин"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           style={styles.input}
         />
         <input
