@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import logo from "../assests/logo/Logo.png";
 import SearchBar from "./SearchBar";
 import UsersLogo from "../assests/svg/users.svg";
@@ -9,7 +9,7 @@ function Header({ userLoggedIn, userAvatar, userName }) {
   const search = (text) => {
     console.log(text);
   };
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <header className="App-header">

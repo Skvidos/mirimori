@@ -1,4 +1,3 @@
-import React from "react";
 import Poster from "../assests/img/anime.png";
 
 function Slider({ title, items }) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../styles/main.css";
 import Header from "../components/header";
 import Footer from "../components/footer";
@@ -7,12 +7,12 @@ import Slider from "../components/slider";
 import PostNews from "../components/postNews";
 
 function Main() {
-  const [newTitles, setNewTitles] = React.useState([]);
-  const [lastWatched, setLastWatched] = React.useState([]);
+  const [newTitles, setNewTitles] = useState([]);
+  const [lastWatched, setLastWatched] = useState([]);
 
-  const [user, setUser] = React.useState(null);
+  const [user, setUser] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       fetch("http://localhost:3001/api/verify", {
