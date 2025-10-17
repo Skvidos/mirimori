@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/header";
+import Footer from "../components/footer";
+import NavBar from "../components/navBar";
+import "../styles/login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -31,60 +37,72 @@ function Login() {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch("http://localhost:3001/api/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.error) setUser(data);
+        })
+        .catch((err) => console.error("Ошибка проверки токена:", err));
+    }
+  }, []);
+
   return (
-    <div style={styles.container}>
-      <h2>Вход</h2>
-      <form onSubmit={handleLogin} style={styles.form}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={styles.input}
-        />
-        <input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-        />
-        <button type="submit" style={styles.button}>
-          Войти
-        </button>
-      </form>
-      <p style={styles.message}>{message}</p>
+    <div className="Login-page">
+      <div className="Login-page-header">
+        <Header
+          userLoggedIn={!!user}
+          userAvatar={user?.avatar_url}
+          userName={user?.username}
+        ></Header>
+        <NavBar></NavBar>
+      </div>
+      <div className="Login-page-main">
+        <div className="Web-border">
+          <div className="Login-page-main-content">
+            <div className="Login-title">Вход</div>
+            <form onSubmit={handleLogin} className="Login-form">
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="Login-input"
+              />
+              <input
+                type="password"
+                placeholder="Пароль"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="Login-input"
+              />
+              <button type="submit" className="Login-form-button">
+                Войти
+              </button>
+              <button
+                type="button"
+                className="Login-form-button"
+                onClick={() => navigate("/register")}
+              >
+                Регистрация
+              </button>
+            </form>
+            <p>{message}</p>
+          </div>
+        </div>
+      </div>
+
+      <Footer></Footer>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "300px",
-    margin: "100px auto",
-    padding: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    textAlign: "center",
-    background: "#fff",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-  },
-  form: { display: "flex", flexDirection: "column" },
-  input: {
-    margin: "10px 0",
-    padding: "10px",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-  },
-  button: {
-    padding: "10px",
-    background: "#2196F3",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  message: { marginTop: "10px", color: "red" },
-};
 
 export default Login;
