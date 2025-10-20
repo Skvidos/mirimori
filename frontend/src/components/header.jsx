@@ -15,7 +15,12 @@ function Header({ userLoggedIn, userAvatar, userName }) {
     <header className="App-header">
       <div className="Web-border">
         <div className="App-header-inner">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img
+            src={logo}
+            className="App-logo"
+            alt="logo"
+            onClick={() => (window.location.href = `/`)}
+          />
           <SearchBar onSearch={search} />
           <div className="Header-right">
             <img src={UsersLogo} alt="Users Logo" className="Users-logo" />

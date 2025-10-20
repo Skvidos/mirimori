@@ -145,6 +145,60 @@ app.post("/anime/upload", upload.single("poster"), (req, res) => {
   });
 });
 
+app.post("/api/ratings", (req, res) => {
+  const { userId, animeId, rating } = req.body;
+  if (!userId || !animeId || !rating) {
+    return res.status(400).json({ error: "Недостаточно данных" });
+  }
+
+  const sql = `
+    INSERT INTO ratings (user_id, anime_id, rating)
+    VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE rating = VALUES(rating)
+  `;
+
+  db.query(sql, [userId, animeId, rating], (err, results) => {
+    if (err) {
+      console.error("Ошибка при сохранении рейтинга:", err);
+      return res.status(500).json({ error: "Ошибка при сохранении рейтинга" });
+    }
+    res.json({ success: true });
+  });
+});
+
+app.get("/api/ratings/:userId/:animeId", (req, res) => {
+  const { userId, animeId } = req.params;
+  const sql = "SELECT rating FROM ratings WHERE user_id = ? AND anime_id = ?";
+
+  db.query(sql, [userId, animeId], (err, results) => {
+    if (err) {
+      console.error("Ошибка при получении рейтинга:", err);
+      return res.status(500).json({ error: "Ошибка при получении рейтинга" });
+    }
+    if (results.length > 0) {
+      res.json({ rating: results[0].rating });
+    } else {
+      res.json({ rating: null });
+    }
+  });
+});
+
+app.get("/api/anime/:animeId/average-rating", (req, res) => {
+  const { animeId } = req.params;
+  const sql = "SELECT AVG(rating) AS avg_rating, COUNT(*) AS total FROM ratings WHERE anime_id = ?";
+
+  db.query(sql, [animeId], (err, results) => {
+    if (err) {
+      console.error("Ошибка при получении среднего рейтинга:", err);
+      return res.status(500).json({ error: "Ошибка при получении среднего рейтинга" });
+    }
+    res.json({
+      avg_rating: results[0].avg_rating ? Number(results[0].avg_rating).toFixed(1) : 0,
+      total: results[0].total,
+    });
+  });
+});
+
 app.listen(3001, () => {
   console.log("🚀 Бэкенд сервер запущен на http://localhost:3001");
 });

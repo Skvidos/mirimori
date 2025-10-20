@@ -44,12 +44,14 @@ function Main() {
 
   return (
     <div className="Main-page">
-      <Header
-        userLoggedIn={!!user}
-        userAvatar={user?.avatar_url}
-        userName={user?.username}
-      />
-      <NavBar />
+      <div className="Main-page-header">
+        <Header
+          userLoggedIn={!!user}
+          userAvatar={user?.avatar_url}
+          userName={user?.username}
+        />
+        <NavBar />
+      </div>
       <div className="Main-content">
         <div className="Web-border">
           <div className="Main-new">

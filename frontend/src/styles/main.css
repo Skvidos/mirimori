@@ -4,6 +4,7 @@
 
 .Slider-item {
   width: 200px;
+  cursor: pointer;
 }
 
 .Anime-title {
@@ -34,5 +35,13 @@
 .Anime-poster {
   width: 200px;
   height: 287px;
-  
+}
+
+.Stars {
+  cursor: pointer;
+  color: rgb(255, 215, 0);
+  font-size: 50px;
+  opacity: 1;
+  transition: color 0.2s, transform 0.1s;
+  transform: scale(1);
 }
