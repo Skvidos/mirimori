@@ -6,6 +6,7 @@ import NavBar from "../components/navBar";
 import Poster from "../assests/img/anime.png";
 import "../styles/animePage.css";
 import StarRating from "../components/StarRating";
+import Slider from "../components/slider";
 
 function AnimePage() {
   const { id } = useParams();
@@ -82,7 +83,13 @@ function AnimePage() {
                   <div className="Anime-date">
                     {new Date(anime.release_date).toLocaleDateString("ru-RU")}
                   </div>
-                  <div className="Anime-status">{anime.status}</div>
+                  <div className="Anime-status">
+                    {anime.status === "ongoing"
+                      ? "В процессе"
+                      : anime.status === "released"
+                      ? "Завершено"
+                      : "Планируется"}
+                  </div>
                 </div>
               </div>
               <div className="Anime-description-box">
@@ -100,6 +107,19 @@ function AnimePage() {
               </div>
             </div>
           </div>
+
+          <div className="Title">Главные герои</div>
+          <div className="Anime-characters-box">
+            <Slider title="" items="" />
+          </div>
+
+          <div className="Title">Авторы</div>
+          <div className="Anime-authors-box">
+            <Slider title="" items="" />
+          </div>
+
+          <div className="Title">Отзывы</div>
+          <div className="Anime-reviews-box">Отзывы отсутствуют</div>
         </div>
       </div>
       <Footer />

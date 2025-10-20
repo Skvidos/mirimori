@@ -10,7 +10,6 @@
 }
 
 .Anime-page-main {
-  height: 70vh;
   display: flex;
   align-items: flex-start
 }
@@ -19,6 +18,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: 60px;
 }
 
 .Anime-page-title {
@@ -26,12 +26,11 @@
   font-weight: 700;
   font-size: 48px;
   line-height: 1;
-  margin-bottom: 14px;
+  margin-bottom: 24px;
 }
 
 .Anime-postres-img {
-  width: 200px;
-  height: 287px;
+  width: 250px;
 }
 
 .Anime-main-right {
@@ -39,7 +38,7 @@
 }
 
 .Anime-main-middle {
-  width: 650px;
+  width: 800px;
 }
 
 .Anime-stats {
@@ -51,6 +50,7 @@
   font-size: 15px;
   line-height: 1;
   margin-bottom: 42px;
+  position: relative;
 }
 
 .Anime-rating {
@@ -76,4 +76,28 @@
 
 .Anime-rating-stars-item {
   margin-right: 15px;
+}
+
+.Anime-date-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.Anime-characters-box,
+.Anime-authors-box,
+.Anime-reviews-box {
+  margin-bottom: 60px;
+}
+
+.Anime-date-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Anime-status {
+  padding: 5px;
+  background-color: #F08982;
+  color: #fff
 }
