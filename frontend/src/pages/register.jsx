@@ -69,6 +69,7 @@ function Register() {
           userLoggedIn={!!user}
           userAvatar={user?.avatar_url}
           userName={user?.username}
+          userPermission={{ isAdmin: user?.isAdmin, isMods: user?.isMods }}
         ></Header>
         <NavBar></NavBar>
       </div>

@@ -49,6 +49,10 @@ function Main() {
           userLoggedIn={!!user}
           userAvatar={user?.avatar_url}
           userName={user?.username}
+          userPermission={{
+            isAdmin: user?.isAdmin,
+            isMods: user?.isMods,
+          }}
         />
         <NavBar />
       </div>

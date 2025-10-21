@@ -1,15 +1,19 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../assests/logo/Logo.png";
 import SearchBar from "./SearchBar";
 import UsersLogo from "../assests/svg/users.svg";
 import userAvatarPlaceholder from "../assests/svg/user-avatar-placeholder.svg";
 import "../styles/header.css";
 
-function Header({ userLoggedIn, userAvatar, userName }) {
+function Header({ userLoggedIn, userAvatar, userName, userPermission }) {
   const search = (text) => {
     console.log(text);
   };
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const canUpload =
+    userPermission && (userPermission.isAdmin || userPermission.isMods);
 
   return (
     <header className="App-header">
@@ -36,23 +40,28 @@ function Header({ userLoggedIn, userAvatar, userName }) {
 
                 {dropdownOpen && (
                   <div className="User-dropdown">
-                    <button>Профиль</button>
-                    <button>Настройки</button>
-                    <button
+                    <div>Профиль</div>
+                    <div>Настройки</div>
+                    {canUpload && (
+                      <Link to="/uploadAnime" className="Upload-button">
+                        Админ панель
+                      </Link>
+                    )}
+                    <div
                       onClick={() => {
                         localStorage.removeItem("token");
                         window.location.reload();
                       }}
                     >
                       Выйти
-                    </button>
+                    </div>
                   </div>
                 )}
               </div>
             ) : (
-              <a href="/login" className="Login-button">
+              <Link to="/login" className="Login-button">
                 Войти
-              </a>
+              </Link>
             )}
           </div>
         </div>
