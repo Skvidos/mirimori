@@ -14,7 +14,7 @@ function Header() {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const canUpload = user?.isAdmin || user?.isMods;
+  const isAdmin = user?.isAdmin || user?.isMods;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -62,7 +62,7 @@ function Header() {
                       Настройки
                     </Link>
 
-                    {canUpload && (
+                    {isAdmin && (
                       <Link to="/adminPanel" className="User-dropdown-button">
                         Админ панель
                       </Link>

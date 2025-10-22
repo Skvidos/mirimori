@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import Header from "../components/header";
-import Footer from "../components/footer";
-import "../styles/uploadAnime.css";
+import "../../styles/uploadAnime.css";
 import axios from "axios";
 
 function UploadAnime() {
@@ -82,14 +80,8 @@ function UploadAnime() {
 
   return (
     <div className="Upload-page">
-      <div className="Upload-page-header">
-        <Header />
-      </div>
-
       <div className="Upload-page-main">
-        <div className="Web-border">
-          <div className="Title">Добавление аниме</div>
-        </div>
+        <div className="Title-admin">Добавление аниме</div>
         <form onSubmit={handleSubmit} className="Upload-form">
           <div className="Upload-main">
             <div className="Upload-inputs">
@@ -153,10 +145,6 @@ function UploadAnime() {
             </div>
           </div>
         </form>
-      </div>
-
-      <div className="Upload-page-footer">
-        <Footer />
       </div>
     </div>
   );
