@@ -1,34 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../styles/main.css";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import NavBar from "../components/navBar";
 import Slider from "../components/slider";
 import PostNews from "../components/postNews";
+import { UserContext } from "../components/UserContext";
 
 function Main() {
+  const { user } = useContext(UserContext);
   const [newTitles, setNewTitles] = useState([]);
   const [lastWatched, setLastWatched] = useState([]);
-
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetch("http://localhost:3001/api/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.error) setUser(data);
-        })
-        .catch((err) => console.error("Ошибка проверки токена:", err));
-    }
-  }, []);
 
   useEffect(() => {
     fetch("http://localhost:3001/anime/new")
@@ -56,6 +38,7 @@ function Main() {
         />
         <NavBar />
       </div>
+
       <div className="Main-content">
         <div className="Web-border">
           <div className="Main-new">
@@ -72,6 +55,7 @@ function Main() {
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );

@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../components/UserContext";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import NavBar from "../components/navBar";
@@ -11,7 +12,7 @@ function Login() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
+  const { user, setUser, setUserLoggedIn } = useContext(UserContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,8 +26,11 @@ function Login() {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        setMessage("Вход успешен!");
 
+        setUser(data.user);
+        setUserLoggedIn(true);
+
+        setMessage("Вход успешен!");
         setTimeout(() => navigate("/"), 1000);
       } else {
         setMessage(data.error || data.message || "Ошибка входа");
@@ -49,11 +53,11 @@ function Login() {
       })
         .then((res) => res.json())
         .then((data) => {
-          if (!data.error) setUser(data);
+          if (!data.error) setUser(data.user);
         })
         .catch((err) => console.error("Ошибка проверки токена:", err));
     }
-  }, []);
+  }, [setUser]);
 
   return (
     <div className="Login-page">
@@ -66,9 +70,10 @@ function Login() {
             isAdmin: user?.isAdmin,
             isMods: user?.isMods,
           }}
-        ></Header>
-        <NavBar></NavBar>
+        />
+        <NavBar />
       </div>
+
       <div className="Login-page-main">
         <div className="Web-border">
           <div className="Login-page-main-content">
@@ -104,7 +109,7 @@ function Login() {
         </div>
       </div>
 
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 }

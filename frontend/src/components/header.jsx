@@ -1,19 +1,31 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assests/logo/Logo.png";
 import SearchBar from "./SearchBar";
 import UsersLogo from "../assests/svg/users.svg";
 import userAvatarPlaceholder from "../assests/svg/user-avatar-placeholder.svg";
 import "../styles/header.css";
+import { UserContext } from "../components/UserContext";
 
-function Header({ userLoggedIn, userAvatar, userName, userPermission }) {
+function Header() {
+  const navigate = useNavigate();
+  const { userLoggedIn, setUserLoggedIn, userAvatar, user } =
+    useContext(UserContext);
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const canUpload = user?.isAdmin || user?.isMods;
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUserLoggedIn(false);
+    setDropdownOpen(false);
+    navigate("/login");
+  };
+
   const search = (text) => {
     console.log(text);
   };
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const canUpload =
-    userPermission && (userPermission.isAdmin || userPermission.isMods);
 
   return (
     <header className="App-header">
@@ -23,11 +35,14 @@ function Header({ userLoggedIn, userAvatar, userName, userPermission }) {
             src={logo}
             className="App-logo"
             alt="logo"
-            onClick={() => (window.location.href = `/`)}
+            onClick={() => navigate("/")}
           />
+
           <SearchBar onSearch={search} />
+
           <div className="Header-right">
             <img src={UsersLogo} alt="Users Logo" className="Users-logo" />
+
             {userLoggedIn ? (
               <div className="User-block" style={{ position: "relative" }}>
                 <img
@@ -40,18 +55,22 @@ function Header({ userLoggedIn, userAvatar, userName, userPermission }) {
 
                 {dropdownOpen && (
                   <div className="User-dropdown">
-                    <div>Профиль</div>
-                    <div>Настройки</div>
+                    <Link to="/profile" className="User-dropdown-button">
+                      Профиль
+                    </Link>
+                    <Link to="/settings" className="User-dropdown-button">
+                      Настройки
+                    </Link>
+
                     {canUpload && (
-                      <Link to="/uploadAnime" className="Upload-button">
+                      <Link to="/uploadAnime" className="User-dropdown-button">
                         Админ панель
                       </Link>
                     )}
+
                     <div
-                      onClick={() => {
-                        localStorage.removeItem("token");
-                        window.location.reload();
-                      }}
+                      onClick={handleLogout}
+                      className="User-dropdown-button"
                     >
                       Выйти
                     </div>
@@ -59,7 +78,7 @@ function Header({ userLoggedIn, userAvatar, userName, userPermission }) {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="Login-button">
+              <Link to="/login" className="Header-user-button">
                 Войти
               </Link>
             )}

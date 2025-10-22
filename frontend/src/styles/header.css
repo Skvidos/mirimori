@@ -134,8 +134,8 @@
 .User-dropdown {
   position: absolute;
   top: 95px;
-  right: -5px;
-  width: 110px;
+  right: -25px;
+  width: 140px;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -145,15 +145,16 @@
   z-index: 10;
 }
 
-.User-dropdown button {
+.User-dropdown-button {
   padding: 10px 14px;
   border: none;
   background: none;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
+  text-decoration: none;
 }
 
-.User-dropdown button:hover {
+.User-dropdown-button:hover {
   background: #f2f2f2;
 }
 
@@ -166,4 +167,11 @@
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.Header-user-button {
+  font-family: "Bellota Text";
+  color: #000;
+  font-size: 26px;
+  text-decoration: none;
 }

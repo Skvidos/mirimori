@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../components/UserContext";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import NavBar from "../components/navBar";
@@ -12,8 +13,7 @@ function Register() {
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
-
-  const [user, setUser] = useState(null);
+  const { user, setUser } = useContext(UserContext);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -44,24 +44,6 @@ function Register() {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetch("http://localhost:3001/api/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.error) setUser(data);
-        })
-        .catch((err) => console.error("Ошибка проверки токена:", err));
-    }
-  }, []);
-
   return (
     <div className="Register-page">
       <div className="Register-page-header">
@@ -69,10 +51,14 @@ function Register() {
           userLoggedIn={!!user}
           userAvatar={user?.avatar_url}
           userName={user?.username}
-          userPermission={{ isAdmin: user?.isAdmin, isMods: user?.isMods }}
-        ></Header>
-        <NavBar></NavBar>
+          userPermission={{
+            isAdmin: user?.isAdmin,
+            isMods: user?.isMods,
+          }}
+        />
+        <NavBar />
       </div>
+
       <div className="Register-page-main">
         <div className="Web-border">
           <div className="Register-page-main-content">
@@ -103,11 +89,18 @@ function Register() {
                 Зарегистрироваться
               </button>
             </form>
-            {message && <p className="Register-message">{message}</p>}
+            {message && (
+              <p className="Register-message">
+                {typeof message === "string"
+                  ? message
+                  : message.sqlMessage || "Ошибка на сервере"}
+              </p>
+            )}
           </div>
         </div>
       </div>
-      <Footer></Footer>
+
+      <Footer />
     </div>
   );
 }

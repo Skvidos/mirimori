@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { UserContext } from "../components/UserContext";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import NavBar from "../components/navBar";
@@ -12,25 +13,7 @@ function AnimePage() {
   const { id } = useParams();
   const [anime, setAnime] = useState(null);
 
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetch("http://localhost:3001/api/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.error) setUser(data);
-        })
-        .catch((err) => console.error("Ошибка проверки токена:", err));
-    }
-  }, []);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     fetch(`http://localhost:3001/anime/${id}`)
@@ -55,6 +38,7 @@ function AnimePage() {
         />
         <NavBar />
       </div>
+
       <div className="Anime-page-main">
         <div className="Web-border">
           <div className="Anime-page-title">{anime.title}</div>
@@ -81,7 +65,7 @@ function AnimePage() {
                   По-японски: {anime.title_jp}
                 </div>
                 <div className="Anime-eng-title">
-                  По-английски: {anime.title_en}
+                  По-английски: {anime.title_en}
                 </div>
                 <div className="Anime-date-box">
                   <div className="Anime-date">
@@ -96,6 +80,7 @@ function AnimePage() {
                   </div>
                 </div>
               </div>
+
               <div className="Anime-description-box">
                 <div className="Title">Описание</div>
                 <div className="Anime-description">{anime.description}</div>
@@ -103,7 +88,7 @@ function AnimePage() {
             </div>
 
             <div className="Anime-main-right">
-              <div className="Title">Рейтинг</div>
+              <div className="Title">Рейтинг</div>
               <div className="Anime-rating-stars-box">
                 <div className="Anime-rating-stars">
                   <StarRating animeId={id} userId={user?.id} />
@@ -126,6 +111,7 @@ function AnimePage() {
           <div className="Anime-reviews-box">Отзывы отсутствуют</div>
         </div>
       </div>
+
       <Footer />
     </div>
   );

@@ -36,7 +36,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/anime/:id" element={<AnimePage />} />
         <Route path="/UploadAnime" element={
-          <ProtectedRoute user={user} requiredRole="mod"><UploadAnime /></ProtectedRoute>
+          <ProtectedRoute user={user}><UploadAnime /></ProtectedRoute>
         } />
       </Routes>
     </Router>
