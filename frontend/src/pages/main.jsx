@@ -27,15 +27,7 @@ function Main() {
   return (
     <div className="Main-page">
       <div className="Main-page-header">
-        <Header
-          userLoggedIn={!!user}
-          userAvatar={user?.avatar_url}
-          userName={user?.username}
-          userPermission={{
-            isAdmin: user?.isAdmin,
-            isMods: user?.isMods,
-          }}
-        />
+        <Header />
         <NavBar />
       </div>
 

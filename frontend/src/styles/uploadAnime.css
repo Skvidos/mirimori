@@ -1,0 +1,132 @@
+.Upload-page-main {
+  margin-top: 30px;
+}
+
+.Upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 25px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Bellota Text";
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.Upload-main {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.Upload-inputs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.Upload-inputs input[type="text"],
+.Upload-inputs input[type="number"],
+.Upload-inputs input[type="date"],
+.Upload-inputs textarea,
+.Upload-inputs select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-family: "Bellota Text";
+}
+
+.Upload-inputs input:focus,
+.Upload-inputs textarea:focus,
+.Upload-inputs select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+  outline: none;
+}
+
+.Upload-inputs textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.Upload-inputs select {
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/* Блок постера */
+.Upload-poster {
+  width: 200px;
+  height: 300px;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.Upload-poster:hover {
+  border-color: #F08982;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+.Poster-placeholder {
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.Poster-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.Upload-form button {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background-color: #F08982;
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.Upload-form button:hover {
+  background-color: #F08982;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 800px) {
+  .Upload-main {
+    flex-direction: column;
+  }
+
+  .Upload-poster {
+    width: 100%;
+    height: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .Upload-form {
+    padding: 20px;
+    width: 90%;
+  }
+}

@@ -27,15 +27,7 @@ function AnimePage() {
   return (
     <div className="Anime-page">
       <div className="Anime-page-header">
-        <Header
-          userLoggedIn={!!user}
-          userAvatar={user?.avatar_url}
-          userName={user?.username}
-          userPermission={{
-            isAdmin: user?.isAdmin,
-            isMods: user?.isMods,
-          }}
-        />
+        <Header />
         <NavBar />
       </div>
 
