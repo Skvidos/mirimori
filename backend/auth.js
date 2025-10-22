@@ -44,7 +44,7 @@ router.post("/login", (req, res) => {
 
       const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: "1h" });
 
-      res.json({ message: "Успешный вход", token, user: { id: user.id, username: user.username, email: user.email, avatar_url: user.avatar_url } });
+      res.json({ message: "Успешный вход", token, user: { id: user.id, username: user.username, email: user.email, avatar_url: user.avatar_url, isMods: user.isMods, isAdmin: user.isAdmin } });
     }
   );
 });
@@ -57,10 +57,20 @@ router.post("/verify", (req, res) => {
 
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ error: "Неверный токен" });
+    const userId = decoded.id;
 
-    res.json({ id: decoded.id, username: decoded.username });
+    connection.query(
+      "SELECT id, username, email, avatar_url, isMods, isAdmin FROM users WHERE id = ?",
+      [userId],
+      (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+        if (results.length === 0) return res.status(404).json({ error: "Пользователь не найден" });
+
+        const user = results[0];
+        res.json(user);
+      }
+    );
   });
 });
-
 
 module.exports = router;

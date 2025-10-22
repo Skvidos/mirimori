@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../components/UserContext";
+import Header from "../components/header";
+import Footer from "../components/footer";
+import NavBar from "../components/navBar";
+import "../styles/register.css";
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -8,6 +13,7 @@ function Register() {
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -39,67 +45,56 @@ function Register() {
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Регистрация</h2>
-      <form onSubmit={handleRegister} style={styles.form}>
-        <input
-          type="text"
-          placeholder="Имя пользователя"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={styles.input}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={styles.input}
-        />
-        <input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-        />
-        <button type="submit" style={styles.button}>
-          Зарегистрироваться
-        </button>
-      </form>
-      {message && <p style={styles.message}>{message}</p>}
+    <div className="Register-page">
+      <div className="Register-page-header">
+        <Header />
+        <NavBar />
+      </div>
+
+      <div className="Register-page-main">
+        <div className="Web-border">
+          <div className="Register-page-main-content">
+            <div className="Register-title">Регистрация</div>
+            <form onSubmit={handleRegister} className="Register-form">
+              <input
+                type="text"
+                placeholder="Имя пользователя"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="Register-input"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="Register-input"
+              />
+              <input
+                type="password"
+                placeholder="Пароль"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="Register-input"
+              />
+              <button type="submit" className="Register-form-button">
+                Зарегистрироваться
+              </button>
+            </form>
+            {message && (
+              <p className="Register-message">
+                {typeof message === "string"
+                  ? message
+                  : message.sqlMessage || "Ошибка на сервере"}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <Footer />
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "320px",
-    margin: "100px auto",
-    padding: "25px",
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    textAlign: "center",
-    background: "#fff",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-  },
-  form: { display: "flex", flexDirection: "column" },
-  input: {
-    margin: "10px 0",
-    padding: "10px",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-  },
-  button: {
-    padding: "10px",
-    background: "#4CAF50",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
-  message: { marginTop: "10px", color: "#333", fontSize: "14px" },
-};
 
 export default Register;

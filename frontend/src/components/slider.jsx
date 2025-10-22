@@ -1,4 +1,3 @@
-import React from "react";
 import Poster from "../assests/img/anime.png";
 
 function Slider({ title, items }) {
@@ -8,7 +7,11 @@ function Slider({ title, items }) {
       <div className="Slider">
         {items.length > 0 ? (
           items.map((anime) => (
-            <div key={anime.id} className="Slider-item">
+            <div
+              key={anime.id}
+              className="Slider-item"
+              onClick={() => (window.location.href = `/anime/${anime.id}`)}
+            >
               <img
                 src={anime.poster ? `${anime.poster}` : Poster}
                 alt={anime.title}

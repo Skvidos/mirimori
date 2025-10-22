@@ -1,0 +1,103 @@
+.Anime-page {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+}
+
+.Anime-page-header {
+  width: 100%;
+}
+
+.Anime-page-main {
+  display: flex;
+  align-items: flex-start
+}
+
+.Anime-page-main-inner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 60px;
+}
+
+.Anime-page-title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+.Anime-postres-img {
+  width: 250px;
+}
+
+.Anime-main-right {
+  width: 240px;
+}
+
+.Anime-main-middle {
+  width: 800px;
+}
+
+.Anime-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: "Bellota Text";
+  color: #787878;
+  font-size: 15px;
+  line-height: 1;
+  margin-bottom: 42px;
+  position: relative;
+}
+
+.Anime-rating {
+  font-family: "Bellota Text";
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.Anime-description {
+  font-family: "Bellota Text";
+  font-size: 15px;
+  font-weight: 700;
+  color: #787878;
+  text-align: justify;
+}
+
+.Anime-rating-stars-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Anime-rating-stars-item {
+  margin-right: 15px;
+}
+
+.Anime-date-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.Anime-characters-box,
+.Anime-authors-box,
+.Anime-reviews-box {
+  margin-bottom: 60px;
+}
+
+.Anime-date-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Anime-status {
+  padding: 5px;
+  background-color: #F08982;
+  color: #fff
+}
