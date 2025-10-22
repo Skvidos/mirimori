@@ -63,7 +63,7 @@ function Header() {
                     </Link>
 
                     {canUpload && (
-                      <Link to="/uploadAnime" className="User-dropdown-button">
+                      <Link to="/adminPanel" className="User-dropdown-button">
                         Админ панель
                       </Link>
                     )}
