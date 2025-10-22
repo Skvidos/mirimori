@@ -4,6 +4,7 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 import "../styles/adminPanel.css";
 import UploadAnime from "../components/adminPanel/uploadAnime";
+import UsersAdmin from "../components/adminPanel/usersAdmin";
 // import UserManagement from "../components/adminPanel/UserManagement";
 // import ContentModeration from "../components/adminPanel/ContentModeration";
 // import AddAnime from "../components/adminPanel/AddAnime";
@@ -49,8 +50,8 @@ function AdminPanel() {
               })}
             </div>
             <div className="Admin-panel-content">
-              {/* {activeTab === "userManagement" && <UserManagement />}
-            {activeTab === "contentModeration" && <ContentModeration />} */}
+              {activeTab === "userManagement" && <UsersAdmin />}
+              {/* {activeTab === "contentModeration" && <ContentModeration />}  */}
               {activeTab === "addAnime" && user?.isMods && <UploadAnime />}
               {/* {activeTab === "addNews" && <AddNews />}
             {activeTab === "siteSettings" && <SiteSettings />} */}

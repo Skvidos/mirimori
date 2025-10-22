@@ -46,7 +46,7 @@ function Header() {
             {userLoggedIn ? (
               <div className="User-block" style={{ position: "relative" }}>
                 <img
-                  src={userAvatar || userAvatarPlaceholder}
+                  src={user?.avatar_url || userAvatarPlaceholder}
                   alt="User Avatar"
                   className="User-avatar"
                   onClick={() => setDropdownOpen(!dropdownOpen)}

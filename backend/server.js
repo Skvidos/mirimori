@@ -32,6 +32,42 @@ app.get("/search", (req, res) => {
   });
 });
 
+app.get("/api/users", (req, res) => {
+  const sql = "SELECT id, username AS name, avatar_url, email, CASE WHEN isAdmin = 1 THEN 'Admin' WHEN isMods = 1 THEN 'Moderator' ELSE 'User' END AS role FROM users";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Ошибка получения списка пользователей:", err);
+      return res.status(500).json({ error: "Ошибка при получении данных" });
+    }
+    res.json(results);
+  });
+});
+
+app.put("/api/users/:id", (req, res) => {
+  const userId = req.params.id;
+  const { isAdmin, isMods } = req.body;
+  const sql = "UPDATE users SET isAdmin = ?, isMods = ? WHERE id = ?";
+  db.query(sql, [isAdmin, isMods, userId], (err, result) => {
+    if (err) {
+      console.error("Ошибка обновления пользователя:", err);
+      return res.status(500).json({ error: "Ошибка при обновлении данных" });
+    }
+    res.json(result);
+  });
+});
+
+app.put("/api/users/:id/delete", async (req, res) => {
+  const userId = req.params.id;
+  const sql = "DELETE FROM users WHERE id = ?";
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error("Ошибка удаления пользователя:", err);
+      return res.status(500).json({ error: "Ошибка при удалении пользователя" });
+    }
+    res.json({ message: "Пользователь удален" });
+  });
+});
+
 // app.get("/watched/:userId", (req, res) => {
 //   const userId = req.params.userId;
 

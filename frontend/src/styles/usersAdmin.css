@@ -1,0 +1,90 @@
+.UsersAdmin-main {
+  margin-top: 30px;
+}
+
+.UsersAdmin-main {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.UsersAdmin-main-inner {
+  width: 100%;
+}
+
+.UsersAdmin-users {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.UsersAdmin-user {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  background-color: #f9f9f9;
+  font-family: "Bellota Text";
+}
+
+.UsersAdmin-user:hover {
+  background-color: #f1f1f1;
+}
+
+.UsersAdmin-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.UsersAdmin-user-box {
+  display: flex;
+  align-items: center;
+}
+
+.UsersAdmin-user-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.UsersAdmin-user-name {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.UsersAdmin-user-name-box {
+  cursor: pointer;
+}
+
+.UserAdmin-user-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.UserAdmin-users-make-mod,
+.UserAdmin-users-make-admin,
+.UserAdmin-users-delete {
+  cursor: pointer;
+}
+
+.UserAdmin-user-buttons div {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.button-success {
+  background-color: rgba(46, 204, 113, 0.3); /* зелёный */
+}
+
+.button-danger {
+  background-color: rgba(231, 76, 60, 0.3); /* красный */
+}
