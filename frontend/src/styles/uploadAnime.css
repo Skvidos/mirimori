@@ -1,7 +1,3 @@
-.Upload-page-main {
-  margin-top: 30px;
-}
-
 .Upload-form {
   display: flex;
   flex-direction: column;
@@ -62,7 +58,6 @@
   cursor: pointer;
 }
 
-/* Блок постера */
 .Upload-poster {
   width: 200px;
   height: 300px;
