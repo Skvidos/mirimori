@@ -43,11 +43,24 @@ app.get("/api/users", (req, res) => {
   });
 });
 
-app.put("/api/users/:id", (req, res) => {
+app.put("/api/users/:id/addMods", (req, res) => {
   const userId = req.params.id;
-  const { isAdmin, isMods } = req.body;
-  const sql = "UPDATE users SET isAdmin = ?, isMods = ? WHERE id = ?";
-  db.query(sql, [isAdmin, isMods, userId], (err, result) => {
+  const { isMods } = req.body;
+  const sql = "UPDATE users SET isMods = ? WHERE id = ?";
+  db.query(sql, [isMods, userId], (err, result) => {
+    if (err) {
+      console.error("Ошибка обновления пользователя:", err);
+      return res.status(500).json({ error: "Ошибка при обновлении данных" });
+    }
+    res.json(result);
+  });
+});
+
+app.put("/api/users/:id/addAdmin", (req, res) => {
+  const userId = req.params.id;
+  const { isAdmin } = req.body;
+  const sql = "UPDATE users SET isAdmin = ? WHERE id = ?";
+  db.query(sql, [isAdmin, userId], (err, result) => {
     if (err) {
       console.error("Ошибка обновления пользователя:", err);
       return res.status(500).json({ error: "Ошибка при обновлении данных" });

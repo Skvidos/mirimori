@@ -74,7 +74,23 @@
   cursor: pointer;
 }
 
-.UserAdmin-user-buttons div {
+.UserAdmin-users-make-mod:hover,
+.UserAdmin-users-make-admin:hover,
+.UserAdmin-users-delete:hover {
+  background-color: #acacac;
+}
+
+.UserAdmin-users-make-mod.add:hover,
+.UserAdmin-users-make-admin.add:hover {
+  background-color: green;
+}
+
+.UserAdmin-users-make-mod.remove:hover,
+.UserAdmin-users-make-admin.remove:hover {
+  background-color: red;
+}
+
+ .UserAdmin-user-buttons div {
   cursor: pointer;
   transition: background-color 0.3s ease;
   padding: 5px;
@@ -82,9 +98,51 @@
 }
 
 .button-success {
-  background-color: rgba(46, 204, 113, 0.3); /* зелёный */
-}
+  background-color: rgba(46, 204, 113, 0.3); 
+} 
 
 .button-danger {
-  background-color: rgba(231, 76, 60, 0.3); /* красный */
+  background-color: rgba(231, 76, 60, 0.3); 
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #fff;
+  z-index: 9999;
+  animation: fadeInOut 2.5s ease forwards;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-family: "Bellota Text";
+  font-size: 19px;
+}
+
+.toast.info {
+  background-color: #3498db;
+}
+
+.toast.success {
+  background-color: #2ecc71;
+}
+
+.toast.danger {
+  background-color: #e74c3c;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  10%, 90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }

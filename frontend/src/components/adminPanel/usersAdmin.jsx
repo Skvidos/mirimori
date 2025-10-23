@@ -11,71 +11,107 @@ function UsersAdmin() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionState, setActionState] = useState({});
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/users")
-      .then((res) => {
-        setUsers(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        setLoading(false);
-      });
+    fetchUsers();
   }, []);
 
-  const updateUserRole = async (userId, newData, actionKey) => {
+  const fetchUsers = async () => {
     try {
-      setActionState((prev) => ({
-        ...prev,
-        [actionKey]: newData[actionKey] ? "add" : "remove",
-      }));
+      const res = await axios.get("http://localhost:3001/api/users");
+      setUsers(res.data);
+      setLoading(false);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
+    }
+  };
 
-      await axios.put(`http://localhost:3001/api/users/${userId}`, newData);
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  const toggleMod = async (user) => {
+    const newValue = !user.isMods;
+    const actionKey = `mod-${user.id}`;
+
+    setActionState((prev) => ({
+      ...prev,
+      [actionKey]: newValue ? "add" : "remove",
+    }));
+
+    try {
+      await axios.put(`http://localhost:3001/api/users/${user.id}/addMods`, {
+        isMods: newValue,
+      });
 
       setUsers((prev) =>
-        prev.map((user) =>
-          user.id === userId ? { ...user, ...newData } : user
-        )
+        prev.map((u) => (u.id === user.id ? { ...u, isMods: newValue } : u))
+      );
+
+      showToast(
+        newValue
+          ? `Пользователь ${user.name} стал модератором`
+          : `Пользователь ${user.name} больше не модератор`,
+        newValue ? "success" : "danger"
       );
 
       setTimeout(() => {
         setActionState((prev) => ({ ...prev, [actionKey]: null }));
       }, 1000);
     } catch (err) {
-      console.error("Ошибка при обновлении роли:", err);
+      console.error("Ошибка при изменении модератора:", err);
+      showToast("Ошибка при изменении роли модератора", "danger");
     }
   };
 
-  const toggleMod = (user) => {
-    const newValue = !user.isMods;
-    updateUserRole(
-      user.id,
-      { isAdmin: user.isAdmin, isMods: newValue },
-      "isMods"
-    );
-  };
-
-  const toggleAdmin = (user) => {
+  const toggleAdmin = async (user) => {
     const newValue = !user.isAdmin;
-    updateUserRole(
-      user.id,
-      { isAdmin: newValue, isMods: user.isMods },
-      "isAdmin"
-    );
+    const actionKey = `admin-${user.id}`;
+
+    setActionState((prev) => ({
+      ...prev,
+      [actionKey]: newValue ? "add" : "remove",
+    }));
+
+    try {
+      await axios.put(`http://localhost:3001/api/users/${user.id}/addAdmin`, {
+        isAdmin: newValue,
+      });
+
+      // моментальное обновление
+      setUsers((prev) =>
+        prev.map((u) => (u.id === user.id ? { ...u, isAdmin: newValue } : u))
+      );
+
+      showToast(
+        newValue
+          ? `Пользователь ${user.name} стал администратором`
+          : `Пользователь ${user.name} больше не администратор`,
+        newValue ? "success" : "danger"
+      );
+
+      setTimeout(() => {
+        setActionState((prev) => ({ ...prev, [actionKey]: null }));
+      }, 1000);
+    } catch (err) {
+      console.error("Ошибка при изменении администратора:", err);
+      showToast("Ошибка при изменении роли администратора", "danger");
+    }
   };
 
   const toggleBan = async (user) => {
     try {
       await axios.put(`http://localhost:3001/api/users/${user.id}/delete`);
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === user.id ? { ...u, isBanned: !u.isBanned } : u
-        )
-      );
+
+      setUsers((prev) => prev.filter((u) => u.id !== user.id));
+
+      showToast(`Пользователь ${user.name} был удалён`, "danger");
     } catch (err) {
-      console.error("Ошибка при блокировке пользователя:", err);
+      console.error("Ошибка при удалении пользователя:", err);
+      showToast("Ошибка при удалении пользователя", "danger");
     }
   };
 
@@ -84,9 +120,12 @@ function UsersAdmin() {
 
   return (
     <div className="UsersAdmin">
+      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
+
       <div className="UsersAdmin-header">
         <div className="Title-admin">Пользователи</div>
       </div>
+
       <div className="UsersAdmin-main">
         <div className="UsersAdmin-main-inner">
           <div className="UsersAdmin-users">
@@ -104,17 +143,24 @@ function UsersAdmin() {
                     onClick={() => (window.location.href = `/user/${user.id}`)}
                   >
                     <div className="UsersAdmin-user-name">{user.name}</div>
-                    <div className="UsersAdmin-user-role">{user.role}</div>
+                    <div className="UsersAdmin-user-role">
+                      {user.isAdmin
+                        ? "Администратор"
+                        : user.isMods
+                        ? "Модератор"
+                        : "Пользователь"}
+                    </div>
                   </div>
                 </div>
+
                 <div className="UsersAdmin-user-email">{user.email}</div>
 
                 <div className="UserAdmin-user-buttons">
                   <div
                     className={`UserAdmin-users-make-mod ${
-                      actionState.isMods === "add"
+                      actionState[`mod-${user.id}`] === "add"
                         ? "button-success"
-                        : actionState.isMods === "remove"
+                        : actionState[`mod-${user.id}`] === "remove"
                         ? "button-danger"
                         : ""
                     }`}
@@ -134,9 +180,9 @@ function UsersAdmin() {
 
                   <div
                     className={`UserAdmin-users-make-admin ${
-                      actionState.isAdmin === "add"
+                      actionState[`admin-${user.id}`] === "add"
                         ? "button-success"
-                        : actionState.isAdmin === "remove"
+                        : actionState[`admin-${user.id}`] === "remove"
                         ? "button-danger"
                         : ""
                     }`}
@@ -155,12 +201,12 @@ function UsersAdmin() {
                   </div>
 
                   <div
-                    className={"UserAdmin-users-delete"}
+                    className="UserAdmin-users-delete"
                     onClick={() => toggleBan(user)}
                   >
                     <img
                       src={Ban}
-                      alt="Заблокировать пользователя"
+                      alt="Удалить пользователя"
                       width={25}
                       height={25}
                     />
