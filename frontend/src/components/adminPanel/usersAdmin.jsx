@@ -81,7 +81,6 @@ function UsersAdmin() {
         isAdmin: newValue,
       });
 
-      // моментальное обновление
       setUsers((prev) =>
         prev.map((u) => (u.id === user.id ? { ...u, isAdmin: newValue } : u))
       );

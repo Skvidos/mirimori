@@ -9,8 +9,7 @@ import { UserContext } from "../components/UserContext";
 
 function Header() {
   const navigate = useNavigate();
-  const { userLoggedIn, setUserLoggedIn, userAvatar, user } =
-    useContext(UserContext);
+  const { userLoggedIn, setUserLoggedIn, user } = useContext(UserContext);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 

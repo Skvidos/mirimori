@@ -69,7 +69,7 @@ app.put("/api/users/:id/addAdmin", (req, res) => {
   });
 });
 
-app.put("/api/users/:id/delete", async (req, res) => {
+app.delete("/api/users/:id/delete", async (req, res) => {
   const userId = req.params.id;
   const sql = "DELETE FROM users WHERE id = ?";
   db.query(sql, [userId], (err, result) => {
@@ -81,24 +81,28 @@ app.put("/api/users/:id/delete", async (req, res) => {
   });
 });
 
-// app.get("/watched/:userId", (req, res) => {
-//   const userId = req.params.userId;
+app.get("/api/anime", (req, res) => {
+  const sql = "SELECT id, title, type, poster FROM anime LIMIT 50";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Ошибка получения списка аниме:", err);
+      return res.status(500).json({ error: "Ошибка при получении данных" });
+    }
+    res.json(results);
+  });
+});
 
-//   const sql = `
-//     SELECT a.id, a.title, a.poster_url, w.status, w.episodes_watched
-//     FROM watched w
-//     JOIN anime a ON w.anime_id = a.id
-//     WHERE w.user_id = ?
-//   `;
-
-//   db.query(sql, [userId], (err, results) => {
-//     if (err) {
-//       console.error("Ошибка получения списка просмотренного:", err);
-//       return res.status(500).json({ error: "Ошибка при получении данных" });
-//     }
-//     res.json(results);
-//   });
-// });
+app.delete("/api/anime/:id/delete", (req, res) => {
+  const animeId = req.params.id;
+  const sql = "DELETE FROM anime WHERE id = ?";
+  db.query(sql, [animeId], (err, result) => {
+    if (err) {
+      console.error("Ошибка удаления аниме:", err);
+      return res.status(500).json({ error: "Ошибка при удалении аниме" });
+    }
+    res.json({ message: "Аниме удалено" });
+  });
+});
 
 app.post("/watched", (req, res) => {
   const { user_id, anime_id, status, episodes_watched } = req.body;

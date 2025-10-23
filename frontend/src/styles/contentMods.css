@@ -1,0 +1,55 @@
+.Content-mods-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  background-color: #f9f9f9;
+  justify-content: space-between;
+}
+
+.Content-mods-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.Content-mods-info-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.Content-mods-item-poster {
+  width: 70px;
+}
+
+.Content-mods-item-title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.Content-mods-item-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.Content-mods-action-button {
+  display: flex;
+  gap: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.Content-mods-action-button:hover {
+  background-color: #acacac;
+}
