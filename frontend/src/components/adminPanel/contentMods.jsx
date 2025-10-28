@@ -9,6 +9,7 @@ function ContentMods() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
+  const [popup, setPopup] = useState(null);
   const [anime, setAnime] = useState([]);
 
   const showToast = (message, type = "info") => {
