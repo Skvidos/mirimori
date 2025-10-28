@@ -82,15 +82,34 @@ app.delete("/api/users/:id/delete", async (req, res) => {
 });
 
 app.get("/api/anime", (req, res) => {
-  const sql = "SELECT id, title, type, poster FROM anime LIMIT 50";
-  db.query(sql, (err, results) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const offset = (page - 1) * limit;
+
+  const sql = "SELECT * FROM anime LIMIT ? OFFSET ?";
+  db.query(sql, [limit, offset], (err, result) => {
     if (err) {
-      console.error("Ошибка получения списка аниме:", err);
-      return res.status(500).json({ error: "Ошибка при получении данных" });
+      console.error("Ошибка при получении списка аниме:", err);
+      return res.status(500).json({ error: "Ошибка при загрузке данных" });
     }
-    res.json(results);
+
+    db.query("SELECT COUNT(*) AS total FROM anime", (err2, countResult) => {
+      if (err2) {
+        console.error("Ошибка при подсчёте:", err2);
+        return res.status(500).json({ error: "Ошибка при подсчёте записей" });
+      }
+
+      const total = countResult[0].total;
+      res.json({
+        data: result,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+      });
+    });
   });
 });
+
 
 app.delete("/api/anime/:id/delete", (req, res) => {
   const animeId = req.params.id;
