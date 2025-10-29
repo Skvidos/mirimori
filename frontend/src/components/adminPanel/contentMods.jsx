@@ -11,6 +11,10 @@ function ContentMods() {
   const [toast, setToast] = useState(null);
   const [anime, setAnime] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [filterYear, setFilterYear] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc"); // ← добавлено
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
@@ -20,11 +24,19 @@ function ContentMods() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchAnime = async (query = "", currentPage = 1) => {
+  const fetchAnime = async () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:3001/api/anime", {
-        params: { q: query, page: currentPage, limit },
+        params: {
+          q: searchQuery,
+          type: filterType,
+          status: filterStatus,
+          year: filterYear,
+          sort: sortOrder,
+          page,
+          limit,
+        },
       });
 
       setAnime(res.data.data || []);
@@ -36,27 +48,18 @@ function ContentMods() {
     }
   };
 
-  // 🔄 При первой загрузке
-  useEffect(() => {
-    fetchAnime(searchQuery, page);
-  }, [page]);
-
-  // 🔍 Поиск с debounce
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setPage(1); // сбрасываем на первую страницу при поиске
-      fetchAnime(searchQuery, 1);
-    }, 500);
-
+      fetchAnime();
+    }, 400);
     return () => clearTimeout(timeout);
-  }, [searchQuery]);
+  }, [searchQuery, filterType, filterStatus, filterYear, sortOrder, page]);
 
-  // 🗑 Удаление аниме
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:3001/api/anime/${id}/delete`);
       showToast("Аниме удалено", "success");
-      fetchAnime(searchQuery, page); // обновляем текущую страницу
+      fetchAnime();
     } catch (err) {
       showToast("Ошибка при удалении аниме", "error");
     }
@@ -71,18 +74,74 @@ function ContentMods() {
       <div className="Content-mods-main">
         <div className="Title-admin">Модерация контента</div>
 
-        {/* 🔍 Поиск */}
-        <div className="Content-search-box">
+        <div className="Content-filters-box">
           <input
             type="text"
-            placeholder="Поиск аниме по названию..."
+            placeholder="Поиск аниме..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
             className="Content-search-input"
           />
+
+          <div className="Content-sort-box">
+            <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(e.target.value);
+                setPage(1);
+              }}
+              className="Content-filter-select"
+            >
+              <option value="">Все типы</option>
+              <option value="TV">TV</option>
+              <option value="Movie">Movie</option>
+              <option value="OVA">OVA</option>
+              <option value="ONA">ONA</option>
+              <option value="Special">Special</option>
+            </select>
+
+            <select
+              value={filterStatus}
+              onChange={(e) => {
+                setFilterStatus(e.target.value);
+                setPage(1);
+              }}
+              className="Content-filter-select"
+            >
+              <option value="">Все статусы</option>
+              <option value="released">Вышло</option>
+              <option value="ongoing">Онгоинг</option>
+              <option value="upcoming">Анонс</option>
+            </select>
+
+            <input
+              type="number"
+              placeholder="Год"
+              value={filterYear}
+              onChange={(e) => {
+                setFilterYear(e.target.value);
+                setPage(1);
+              }}
+              className="Content-filter-input"
+            />
+
+            <select
+              value={sortOrder}
+              onChange={(e) => {
+                setSortOrder(e.target.value);
+                setPage(1);
+              }}
+              className="Content-filter-select"
+            >
+              <option value="asc">ID ↑</option>
+              <option value="desc">ID ↓</option>
+            </select>
+          </div>
         </div>
 
-        {/* 📦 Контент */}
         <div className="Content-mods-inner">
           {anime.length > 0 ? (
             anime.map((item) => (
@@ -132,7 +191,6 @@ function ContentMods() {
           )}
         </div>
 
-        {/* 📄 Пагинация */}
         <div className="Pagination-box">
           {Array.from({ length: totalPages }, (_, i) => i + 1)
             .filter(
@@ -142,26 +200,18 @@ function ContentMods() {
                 (num >= page - 2 && num <= page + 2)
             )
             .map((num, index, array) => (
-              <>
+              <span key={num} className="Pagination-pages">
                 {index > 0 && array[index - 1] !== num - 1 && (
                   <span className="dots">...</span>
                 )}
                 <div
-                  key={num}
                   className={`page-btn ${num === page ? "active" : ""}`}
                   onClick={() => setPage(num)}
                 >
                   {num}
                 </div>
-              </>
+              </span>
             ))}
-          <div
-            className="next-btn"
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
-          >
-            →
-          </div>
         </div>
       </div>
     </div>

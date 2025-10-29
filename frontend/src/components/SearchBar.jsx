@@ -52,6 +52,12 @@ export default function SearchBar() {
               className="Searchbar-item"
               onClick={() => (window.location.href = `/anime/${item.id}`)}
             >
+              <img
+                src={item.poster}
+                alt={item.title}
+                width="40"
+                className="Searchbar-poster"
+              />
               <span className="Searchbar-title">{item.title}</span>
               {item.title_en && (
                 <span className="Searchbar-subtitle">({item.title_en})</span>

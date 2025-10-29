@@ -115,3 +115,35 @@
   color: #aaa;
   padding: 0 4px;
 }
+
+.Pagination-pages {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.Content-filter-select {
+  width: 150px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: "Bellota Text";
+  font-size: 16px;
+}
+
+.Content-filter-input {
+  width: 150px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: "Bellota Text";
+  font-size: 16px;
+}
+
+.Content-sort-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 0;
+}

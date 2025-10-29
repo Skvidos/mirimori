@@ -82,28 +82,81 @@ app.delete("/api/users/:id/delete", async (req, res) => {
 });
 
 app.get("/api/anime", (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 20;
+  const {
+    q = "",
+    type = "",
+    status = "",
+    year = "",
+    sort = "asc",
+    page = 1,
+    limit = 10,
+  } = req.query;
+
   const offset = (page - 1) * limit;
 
-  const sql = "SELECT * FROM anime LIMIT ? OFFSET ?";
-  db.query(sql, [limit, offset], (err, result) => {
+  let sql = "SELECT * FROM anime WHERE 1=1";
+  const params = [];
+
+  if (q) {
+    sql += " AND (title LIKE ? OR title_en LIKE ? OR title_jp LIKE ?)";
+    const searchTerm = `%${q}%`;
+    params.push(searchTerm, searchTerm, searchTerm);
+  }
+  if (type) {
+    sql += " AND type = ?";
+    params.push(type);
+  }
+  if (status) {
+    sql += " AND status = ?";
+    params.push(status);
+  }
+  if (year) {
+    sql += " AND release LIKE ?";
+    params.push(`${year}%`);
+  }
+
+  sql += ` ORDER BY id ${sort === "desc" ? "DESC" : "ASC"}`;
+  sql += " LIMIT ? OFFSET ?";
+  params.push(Number(limit), Number(offset));
+
+  let countSql = "SELECT COUNT(*) AS total FROM anime WHERE 1=1";
+  const countParams = [];
+
+  if (q) {
+    countSql += " AND (title LIKE ? OR title_en LIKE ? OR title_jp LIKE ?)";
+    const searchTerm = `%${q}%`;
+    countParams.push(searchTerm, searchTerm, searchTerm);
+  }
+  if (type) {
+    countSql += " AND type = ?";
+    countParams.push(type);
+  }
+  if (status) {
+    countSql += " AND status = ?";
+    countParams.push(status);
+  }
+  if (year) {
+    countSql += " AND release LIKE ?";
+    countParams.push(`${year}%`);
+  }
+
+  db.query(sql, params, (err, rows) => {
     if (err) {
-      console.error("Ошибка при получении списка аниме:", err);
-      return res.status(500).json({ error: "Ошибка при загрузке данных" });
+      console.error("Ошибка при загрузке аниме:", err);
+      return res.status(500).json({ message: "Ошибка сервера" });
     }
 
-    db.query("SELECT COUNT(*) AS total FROM anime", (err2, countResult) => {
+    db.query(countSql, countParams, (err2, countResult) => {
       if (err2) {
-        console.error("Ошибка при подсчёте:", err2);
-        return res.status(500).json({ error: "Ошибка при подсчёте записей" });
+        console.error("Ошибка при подсчете аниме:", err2);
+        return res.status(500).json({ message: "Ошибка сервера" });
       }
 
       const total = countResult[0].total;
+
       res.json({
-        data: result,
+        data: rows,
         total,
-        page,
         totalPages: Math.ceil(total / limit),
       });
     });
@@ -186,7 +239,6 @@ app.get("/anime/:id", (req, res) => {
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Настройка multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/posters");
@@ -272,5 +324,5 @@ app.get("/api/anime/:animeId/average-rating", (req, res) => {
 });
 
 app.listen(3001, () => {
-  console.log("🚀 Бэкенд сервер запущен на http://localhost:3001");
+  console.log("Бэкенд сервер запущен на http://localhost:3001");
 });
