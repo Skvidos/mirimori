@@ -3,6 +3,7 @@ import Poster from "../../assests/img/anime.png";
 import "../../styles/contentMods.css";
 import Edit from "../../assests/svg/wrench-solid-full.svg";
 import Delete from "../../assests/svg/ban-solid-full.svg";
+import Modal from "./modal";
 import axios from "axios";
 
 function ContentMods() {
@@ -14,10 +15,12 @@ function ContentMods() {
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterYear, setFilterYear] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc"); // ← добавлено
+  const [sortOrder, setSortOrder] = useState("asc");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
+
+  const [editAnime, setEditAnime] = useState(null);
 
   const showToast = (message, type = "info") => {
     setToast({ message, type });
@@ -71,6 +74,13 @@ function ContentMods() {
   return (
     <div className="Content-mods-page">
       {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
+      {editAnime && (
+        <Modal
+          anime={editAnime}
+          onClose={() => setEditAnime(null)}
+          onSave={fetchAnime}
+        />
+      )}
       <div className="Content-mods-main">
         <div className="Title-admin">Модерация контента</div>
 
@@ -172,9 +182,7 @@ function ContentMods() {
                       alt="Редактировать"
                       width={25}
                       height={25}
-                      onClick={() =>
-                        (document.location = `/adminpanel/editanime/${item.id}`)
-                      }
+                      onClick={() => setEditAnime(item)}
                     />
                   </div>
                   <div
