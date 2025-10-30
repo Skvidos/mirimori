@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "../../styles/modal.css";
 import axios from "axios";
 
-function EditAnimeModal({ anime, onClose, onUpdate }) {
+function Modal({ anime, onClose }) {
   const [form, setForm] = useState({
     title: anime.title || "",
     title_jp: anime.title_jp || "",
@@ -16,88 +16,112 @@ function EditAnimeModal({ anime, onClose, onUpdate }) {
     release_date: anime.release_date || "",
     studio: anime.studio || "",
     source: anime.source || "",
-    poster: anime.poster || null,
+    poster: null,
   });
 
   const [posterPreview, setPosterPreview] = useState(anime.poster || null);
   const posterInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === "poster" && files && files[0]) {
-      setForm({ ...form, poster: files[0] });
-      setPosterPreview(URL.createObjectURL(files[0]));
+      const file = files[0];
+      setForm((prev) => ({ ...prev, poster: file }));
+      setPosterPreview(URL.createObjectURL(file));
     } else {
-      setForm({ ...form, [name]: value });
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
     try {
       const data = new FormData();
-      for (let key in form) data.append(key, form[key]);
 
-      const res = await axios.put(
+      for (let key in form) {
+        if (key !== "poster" && form[key] !== null && form[key] !== undefined) {
+          data.append(key, form[key]);
+        }
+      }
+
+      if (form.poster) {
+        data.append("poster", form.poster);
+      }
+
+      await axios.put(
         `http://localhost:3001/api/anime/${anime.id}/edit`,
         data,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      if (onUpdate) onUpdate(res.data); // обновляем список аниме в родителе
-      onClose(); // закрываем модалку
+      showToast("Аниме успешно обновлено!", "success");
     } catch (err) {
-      console.error(err);
-      setError("Ошибка при сохранении изменений");
+      console.error("Ошибка при обновлении аниме:", err);
+      showToast("Ошибка при обновлении аниме", "danger");
     } finally {
       setLoading(false);
     }
   };
 
+  const inputFields = [
+    { name: "title", placeholder: "Название", type: "text", required: true },
+    {
+      name: "title_jp",
+      placeholder: "Название на японском",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "title_en",
+      placeholder: "Название на английском",
+      type: "text",
+      required: true,
+    },
+    { name: "alt_titles", placeholder: "Другие названия", type: "text" },
+    {
+      name: "episodes_total",
+      placeholder: "Эпизодов",
+      type: "number",
+      required: true,
+    },
+    {
+      name: "episodes_duration",
+      placeholder: "Длительность эпизода",
+      type: "number",
+      required: true,
+    },
+    { name: "release_date", placeholder: "Дата выхода", type: "date" },
+    { name: "studio", placeholder: "Студия", type: "text" },
+    { name: "source", placeholder: "Источник", type: "text" },
+  ];
+
   return (
     <div className="Modal-overlay">
+      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
       <div className="Modal-content">
         <div className="Title">Редактирование аниме</div>
-        {error && <div className="error">{error}</div>}
         <div className="Modal-content-box">
           <div className="Modal-left">
-            <input
-              type="text"
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              placeholder="Название"
-              className="Modal-input"
-            />
-            <input
-              type="text"
-              name="title_jp"
-              value={form.title_jp}
-              onChange={handleChange}
-              placeholder="Название на японском"
-              className="Modal-input"
-            />
-            <input
-              type="text"
-              name="title_en"
-              value={form.title_en}
-              onChange={handleChange}
-              placeholder="Название на английском"
-              className="Modal-input"
-            />
-            <input
-              type="text"
-              name="alt_titles"
-              value={form.alt_titles}
-              onChange={handleChange}
-              placeholder="Другие названия"
-              className="Modal-input"
-            />
+            {inputFields.map((field) => (
+              <input
+                key={field.name}
+                type={field.type}
+                name={field.name}
+                placeholder={field.placeholder}
+                value={form[field.name]}
+                onChange={handleChange}
+                required={field.required}
+                className="Modal-input"
+              />
+            ))}
             <textarea
               name="description"
               value={form.description}
@@ -117,69 +141,21 @@ function EditAnimeModal({ anime, onClose, onUpdate }) {
               <option value="ONA">ONA</option>
               <option value="Special">Special</option>
             </select>
-            <input
-              type="text"
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              placeholder="Статус"
-              className="Modal-input"
-            />
-            <input
-              type="number"
-              name="episodes_total"
-              value={form.episodes_total}
-              onChange={handleChange}
-              placeholder="Эпизодов"
-              className="Modal-input"
-            />
-            <input
-              type="number"
-              name="episodes_duration"
-              value={form.episodes_duration}
-              onChange={handleChange}
-              placeholder="Длительность эпизода"
-              className="Modal-input"
-            />
-            <input
-              type="date"
-              name="release_date"
-              value={form.release_date}
-              onChange={handleChange}
-              className="Modal-input"
-            />
-            <input
-              type="text"
-              name="studio"
-              value={form.studio}
-              onChange={handleChange}
-              placeholder="Студия"
-              className="Modal-input"
-            />
-            <input
-              type="text"
-              name="source"
-              value={form.source}
-              onChange={handleChange}
-              placeholder="Источник"
-              className="Modal-input"
-            />
           </div>
+
           <div className="Modal-right">
             <div
               className="Modal-poster"
-              onClick={() =>
-                posterInputRef.current && posterInputRef.current.click()
-              }
+              onClick={() => posterInputRef.current?.click()}
             >
               {posterPreview ? (
                 <img
                   src={posterPreview}
                   alt="Poster preview"
-                  className="Modal-Poster-preview"
+                  className="Modal-poster-preview"
                 />
               ) : (
-                <div className="Modal-Poster-placeholder">
+                <div className="Poster-placeholder">
                   Нажмите, чтобы выбрать постер
                 </div>
               )}
@@ -216,4 +192,4 @@ function EditAnimeModal({ anime, onClose, onUpdate }) {
   );
 }
 
-export default EditAnimeModal;
+export default Modal;

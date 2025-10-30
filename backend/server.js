@@ -269,6 +269,75 @@ app.post("/anime/upload", upload.single("poster"), (req, res) => {
   });
 });
 
+app.put("/api/anime/:id/edit", upload.single("poster"), (req, res) => {
+  const animeId = req.params.id;
+
+  const {
+    title,
+    title_en,
+    title_jp,
+    alt_titles,
+    description,
+    type,
+    status,
+    episodes_total,
+    episode_duration,
+    release_date,
+    studio,
+    source,
+  } = req.body;
+
+  const poster_url = req.file ? `/uploads/posters/${req.file.filename}` : null;
+
+  const sql = `
+    UPDATE anime
+    SET
+      title = ?,
+      title_en = ?,
+      title_jp = ?,
+      alt_titles = ?,
+      description = ?,
+      poster = CASE WHEN ? IS NOT NULL THEN ? ELSE poster END,
+      type = ?,
+      status = ?,
+      episodes_total = ?,
+      episode_duration = ?,
+      release_date = ?,
+      studio = ?,
+      source = ?
+    WHERE id = ?
+  `;
+
+  const values = [
+    title || null,
+    title_en || null,
+    title_jp || null,
+    alt_titles || null,
+    description || null,
+    poster_url,
+    poster_url,
+    type || null,
+    status || null,
+    episodes_total || null,
+    episode_duration || null,
+    release_date || null,
+    studio || null,
+    source || null,
+    animeId,
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Ошибка обновления аниме:", err);
+      return res.status(500).json({ error: "Ошибка при обновлении аниме" });
+    }
+
+    res.json({ message: "Аниме успешно обновлено" });
+  });
+});
+
+
+
 app.post("/api/ratings", (req, res) => {
   const { userId, animeId, rating } = req.body;
   if (!userId || !animeId || !rating) {
