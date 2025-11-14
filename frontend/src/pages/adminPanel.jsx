@@ -6,6 +6,7 @@ import "../styles/adminPanel.css";
 import UploadAnime from "../components/adminPanel/uploadAnime";
 import UsersAdmin from "../components/adminPanel/usersAdmin";
 import ContentMods from "../components/adminPanel/contentMods";
+import AddNews from "../components/adminPanel/AddNews";
 
 function AdminPanel() {
   const { user } = useContext(UserContext);
@@ -50,8 +51,8 @@ function AdminPanel() {
               {activeTab === "userManagement" && <UsersAdmin />}
               {activeTab === "contentModeration" && <ContentMods />}
               {activeTab === "addAnime" && user?.isMods && <UploadAnime />}
-              {/* {activeTab === "addNews" && <AddNews />}
-            {activeTab === "siteSettings" && <SiteSettings />} */}
+              {activeTab === "addNews" && <AddNews />}
+              {/* {activeTab === "siteSettings" && <SiteSettings />} */}
             </div>
           </div>
         </div>

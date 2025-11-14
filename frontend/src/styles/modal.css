@@ -8,6 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .Modal-content {
@@ -19,20 +20,22 @@
 }
 
 .Modal-input {
-  width: 100%;
+  width: 750px;
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-family: "Bellota Text";
 }
 
 .Modal-textarea {
-  width: 100%;
+  width: 750px;
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   resize: vertical;
+  font-family: "Bellota Text";
 }
 
 .Modal-content-box {
@@ -58,6 +61,8 @@
   font-size: 16px;
   transition: all 0.3s ease;
   text-align: center;
+  font-family: "Bellota Text";
+  width: 210px;
 }
 
 .Modal-button:hover {
@@ -74,6 +79,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.Modal-right.second {
+  justify-content: flex-start;
+  gap: 10px;
 }
 
 .Modal-poster-preview {
@@ -112,4 +122,30 @@
   content: "Поменять картинку";
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 12px;
+}
+
+.Image-preview {
+  width: 400px;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.UploadImage {
+  width: 400px;
+  height: 200px;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.UploadImage:hover {
+  border-color: #F08982;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
 }

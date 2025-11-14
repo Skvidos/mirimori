@@ -237,21 +237,35 @@ app.get("/anime/:id", (req, res) => {
   });
 });
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads/posters", express.static(path.join(__dirname, "uploads/posters")));
+app.use("/uploads/images", express.static(path.join(__dirname, "uploads/images")));
 
-const storage = multer.diskStorage({
+
+const storagePosters = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/posters");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-  },
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "poster-" + unique + path.extname(file.originalname));
+  }
 });
-const upload = multer({ storage });
+const uploadPoster = multer({ storage: storagePosters });
 
-app.post("/anime/upload", upload.single("poster"), (req, res) => {
+const storageImages = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/images");
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "image-" + unique + path.extname(file.originalname));
+  }
+});
+const uploadImage = multer({ storage: storageImages });
+
+
+
+app.post("/anime/upload", uploadPoster.single("poster"), (req, res) => {
   const { title, title_jp, title_en, alt_titles, description, type, episodes_total, episodes_duration, release_date, studio, source } = req.body;
   const poster_url = `/uploads/posters/${req.file.filename}`;
 
@@ -269,7 +283,7 @@ app.post("/anime/upload", upload.single("poster"), (req, res) => {
   });
 });
 
-app.put("/api/anime/:id/edit", upload.single("poster"), (req, res) => {
+app.put("/api/anime/:id/edit", uploadPoster.single("poster"), (req, res) => {
   const animeId = req.params.id;
 
   const {
@@ -389,6 +403,47 @@ app.get("/api/anime/:animeId/average-rating", (req, res) => {
       avg_rating: results[0].avg_rating ? Number(results[0].avg_rating).toFixed(1) : 0,
       total: results[0].total,
     });
+  });
+});
+
+app.get("/api/news", (req, res) => {
+  const sql = "SELECT * FROM news ORDER BY created_at DESC";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Ошибка выборки новостей:", err);
+      return res.status(500).json({ error: "Ошибка при получении новостей" });
+    }
+    res.json(results);
+  });
+});
+
+app.post("/api/news/add", uploadImage.single("image"), (req, res) => {
+  const { title, content } = req.body;
+  const image = req.file ? `/uploads/images/${req.file.filename}` : null;
+
+  const sql = `
+    INSERT INTO news (title, content, image)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [title, content, image], (err, result) => {
+    if (err) {
+      console.error("Ошибка добавления новости:", err);
+      return res.status(500).json({ error: "Ошибка при добавлении новости" });
+    }
+    res.json({ message: "Новость добавлена", id: result.insertId });
+  });
+});
+
+app.delete("/api/news/:id", (req, res) => {
+  const newsId = req.params.id;
+  const sql = "DELETE FROM news WHERE id = ?";
+  db.query(sql, [newsId], (err, result) => {
+    if (err) {
+      console.error("Ошибка удаления новости:", err);
+      return res.status(500).json({ error: "Ошибка при удалении новости" });
+    }
+    res.json({ message: "Новость удалена" });
   });
 });
 

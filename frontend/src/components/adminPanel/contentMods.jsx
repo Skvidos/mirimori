@@ -3,7 +3,7 @@ import Poster from "../../assests/img/anime.png";
 import "../../styles/contentMods.css";
 import Edit from "../../assests/svg/wrench-solid-full.svg";
 import Delete from "../../assests/svg/ban-solid-full.svg";
-import Modal from "./modal";
+import Modal from "./modalEditAnime";
 import axios from "axios";
 
 function ContentMods() {
