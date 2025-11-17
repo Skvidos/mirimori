@@ -143,11 +143,14 @@ function UsersAdmin() {
                   >
                     <div className="UsersAdmin-user-name">{user.name}</div>
                     <div className="UsersAdmin-user-role">
-                      {user.isAdmin
+                      {user.role === "Admin"
                         ? "Администратор"
-                        : user.isMods
+                        : user.role === "Moderator"
                         ? "Модератор"
+                        : user.isAdmin && user.isMods
+                        ? "Администратор и модератор"
                         : "Пользователь"}
+                      {console.log(user.role)}
                     </div>
                   </div>
                 </div>
