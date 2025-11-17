@@ -407,15 +407,20 @@ app.get("/api/anime/:animeId/average-rating", (req, res) => {
 });
 
 app.get("/api/news", (req, res) => {
-  const sql = "SELECT * FROM news ORDER BY created_at DESC";
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("Ошибка выборки новостей:", err);
-      return res.status(500).json({ error: "Ошибка при получении новостей" });
-    }
+  const q = req.query.q || "";
+  let sql = "SELECT * FROM news";
+  const params = [];
+  if (q) {
+    sql += " WHERE title LIKE ?";
+    params.push(`%${q}%`);
+  }
+  sql += " ORDER BY created_at DESC";
+  db.query(sql, params, (err, results) => {
+    if (err) return res.status(500).json({ error: "Ошибка" });
     res.json(results);
   });
 });
+
 
 app.post("/api/news/add", uploadImage.single("image"), (req, res) => {
   const { title, content } = req.body;

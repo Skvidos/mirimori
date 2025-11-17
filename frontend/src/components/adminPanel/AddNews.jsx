@@ -46,6 +46,15 @@ function AddNews() {
     }
   };
 
+  const searchNews = async (query) => {
+    try {
+      const res = await axios.get(`http://localhost:3001/api/news?q=${query}`);
+      setNews(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchNews();
   }, []);
@@ -61,13 +70,7 @@ function AddNews() {
         <input
           type="text"
           placeholder="Поиск по заголовкам"
-          onChange={(e) => {
-            const query = e.target.value.toLowerCase();
-            const filteredNews = news.filter((item) =>
-              item.title.toLowerCase().includes(query)
-            );
-            setNews(filteredNews);
-          }}
+          onChange={(e) => searchNews(e.target.value)}
           className="AddNews-search"
         />
 

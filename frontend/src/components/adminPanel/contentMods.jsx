@@ -5,13 +5,17 @@ import Edit from "../../assests/svg/wrench-solid-full.svg";
 import Delete from "../../assests/svg/ban-solid-full.svg";
 import Modal from "./modalEditAnime";
 import axios from "axios";
+import useDebouncedState from "../../hooks/useDebouncedState.jsx";
 
 function ContentMods() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
   const [anime, setAnime] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, searchInput, setSearchInput] = useDebouncedState(
+    "",
+    1000
+  );
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterYear, setFilterYear] = useState("");
@@ -52,10 +56,7 @@ function ContentMods() {
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      fetchAnime();
-    }, 400);
-    return () => clearTimeout(timeout);
+    fetchAnime();
   }, [searchQuery, filterType, filterStatus, filterYear, sortOrder, page]);
 
   const handleDelete = async (id) => {
@@ -88,9 +89,9 @@ function ContentMods() {
           <input
             type="text"
             placeholder="Поиск аниме..."
-            value={searchQuery}
+            value={searchInput}
             onChange={(e) => {
-              setSearchQuery(e.target.value);
+              setSearchInput(e.target.value);
               setPage(1);
             }}
             className="Content-search-input"
