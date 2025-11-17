@@ -12,7 +12,7 @@ function Login() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const { user, setUser, setUserLoggedIn } = useContext(UserContext);
+  const { setUser, setUserLoggedIn } = useContext(UserContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -25,6 +25,15 @@ code {
   margin-bottom: 24px;
 }
 
+.Title-admin {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
 .Slider {
   display: flex;
   justify-content: flex-start;

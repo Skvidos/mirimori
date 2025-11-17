@@ -7,7 +7,6 @@ function StarRating({ animeId, userId }) {
   const [avgRating, setAvgRating] = useState(null);
   const [totalVotes, setTotalVotes] = useState(0);
 
-  // --- загрузка рейтинга пользователя и среднего рейтинга ---
   useEffect(() => {
     if (userId) {
       axios
@@ -29,18 +28,17 @@ function StarRating({ animeId, userId }) {
       .catch(() => {});
   };
 
-  // --- установка / изменение рейтинга ---
   const handleRating = async (value) => {
     if (!userId) {
       alert("Войдите в систему, чтобы поставить оценку!");
       return;
     }
 
-    setRating(value); // сразу обновляем UI
+    setRating(value);
 
     await axios.post("/api/ratings", { userId, animeId, rating: value });
 
-    updateAverageRating(); // обновляем средний рейтинг
+    updateAverageRating();
   };
 
   return (

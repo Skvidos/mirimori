@@ -32,24 +32,149 @@ app.get("/search", (req, res) => {
   });
 });
 
-// app.get("/watched/:userId", (req, res) => {
-//   const userId = req.params.userId;
+app.get("/api/users", (req, res) => {
+  const sql = "SELECT id, username AS name, avatar_url, email, CASE WHEN isAdmin = 1 THEN 'Admin' WHEN isMods = 1 THEN 'Moderator' ELSE 'User' END AS role FROM users";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Ошибка получения списка пользователей:", err);
+      return res.status(500).json({ error: "Ошибка при получении данных" });
+    }
+    res.json(results);
+  });
+});
 
-//   const sql = `
-//     SELECT a.id, a.title, a.poster_url, w.status, w.episodes_watched
-//     FROM watched w
-//     JOIN anime a ON w.anime_id = a.id
-//     WHERE w.user_id = ?
-//   `;
+app.put("/api/users/:id/addMods", (req, res) => {
+  const userId = req.params.id;
+  const { isMods } = req.body;
+  const sql = "UPDATE users SET isMods = ? WHERE id = ?";
+  db.query(sql, [isMods, userId], (err, result) => {
+    if (err) {
+      console.error("Ошибка обновления пользователя:", err);
+      return res.status(500).json({ error: "Ошибка при обновлении данных" });
+    }
+    res.json(result);
+  });
+});
 
-//   db.query(sql, [userId], (err, results) => {
-//     if (err) {
-//       console.error("Ошибка получения списка просмотренного:", err);
-//       return res.status(500).json({ error: "Ошибка при получении данных" });
-//     }
-//     res.json(results);
-//   });
-// });
+app.put("/api/users/:id/addAdmin", (req, res) => {
+  const userId = req.params.id;
+  const { isAdmin } = req.body;
+  const sql = "UPDATE users SET isAdmin = ? WHERE id = ?";
+  db.query(sql, [isAdmin, userId], (err, result) => {
+    if (err) {
+      console.error("Ошибка обновления пользователя:", err);
+      return res.status(500).json({ error: "Ошибка при обновлении данных" });
+    }
+    res.json(result);
+  });
+});
+
+app.delete("/api/users/:id/delete", async (req, res) => {
+  const userId = req.params.id;
+  const sql = "DELETE FROM users WHERE id = ?";
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error("Ошибка удаления пользователя:", err);
+      return res.status(500).json({ error: "Ошибка при удалении пользователя" });
+    }
+    res.json({ message: "Пользователь удален" });
+  });
+});
+
+app.get("/api/anime", (req, res) => {
+  const {
+    q = "",
+    type = "",
+    status = "",
+    year = "",
+    sort = "asc",
+    page = 1,
+    limit = 10,
+  } = req.query;
+
+  const offset = (page - 1) * limit;
+
+  let sql = "SELECT * FROM anime WHERE 1=1";
+  const params = [];
+
+  if (q) {
+    sql += " AND (title LIKE ? OR title_en LIKE ? OR title_jp LIKE ?)";
+    const searchTerm = `%${q}%`;
+    params.push(searchTerm, searchTerm, searchTerm);
+  }
+  if (type) {
+    sql += " AND type = ?";
+    params.push(type);
+  }
+  if (status) {
+    sql += " AND status = ?";
+    params.push(status);
+  }
+  if (year) {
+    sql += " AND release LIKE ?";
+    params.push(`${year}%`);
+  }
+
+  sql += ` ORDER BY id ${sort === "desc" ? "DESC" : "ASC"}`;
+  sql += " LIMIT ? OFFSET ?";
+  params.push(Number(limit), Number(offset));
+
+  let countSql = "SELECT COUNT(*) AS total FROM anime WHERE 1=1";
+  const countParams = [];
+
+  if (q) {
+    countSql += " AND (title LIKE ? OR title_en LIKE ? OR title_jp LIKE ?)";
+    const searchTerm = `%${q}%`;
+    countParams.push(searchTerm, searchTerm, searchTerm);
+  }
+  if (type) {
+    countSql += " AND type = ?";
+    countParams.push(type);
+  }
+  if (status) {
+    countSql += " AND status = ?";
+    countParams.push(status);
+  }
+  if (year) {
+    countSql += " AND release LIKE ?";
+    countParams.push(`${year}%`);
+  }
+
+  db.query(sql, params, (err, rows) => {
+    if (err) {
+      console.error("Ошибка при загрузке аниме:", err);
+      return res.status(500).json({ message: "Ошибка сервера" });
+    }
+
+    db.query(countSql, countParams, (err2, countResult) => {
+      if (err2) {
+        console.error("Ошибка при подсчете аниме:", err2);
+        return res.status(500).json({ message: "Ошибка сервера" });
+      }
+
+      const total = countResult[0].total;
+
+      res.json({
+        data: rows,
+        total,
+        totalPages: Math.ceil(total / limit),
+      });
+    });
+  });
+});
+
+
+app.delete("/api/anime/:id/delete", (req, res) => {
+  const animeId = req.params.id;
+  const sql = "DELETE FROM anime WHERE id = ?";
+  db.query(sql, [animeId], (err, result) => {
+    if (err) {
+      console.error("Ошибка удаления аниме:", err);
+      return res.status(500).json({ error: "Ошибка при удалении аниме" });
+    }
+    res.json({ message: "Аниме удалено" });
+  });
+});
 
 app.post("/watched", (req, res) => {
   const { user_id, anime_id, status, episodes_watched } = req.body;
@@ -112,22 +237,35 @@ app.get("/anime/:id", (req, res) => {
   });
 });
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads/posters", express.static(path.join(__dirname, "uploads/posters")));
+app.use("/uploads/images", express.static(path.join(__dirname, "uploads/images")));
 
-// Настройка multer
-const storage = multer.diskStorage({
+
+const storagePosters = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/posters");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-  },
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "poster-" + unique + path.extname(file.originalname));
+  }
 });
-const upload = multer({ storage });
+const uploadPoster = multer({ storage: storagePosters });
 
-app.post("/anime/upload", upload.single("poster"), (req, res) => {
+const storageImages = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/images");
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "image-" + unique + path.extname(file.originalname));
+  }
+});
+const uploadImage = multer({ storage: storageImages });
+
+
+
+app.post("/anime/upload", uploadPoster.single("poster"), (req, res) => {
   const { title, title_jp, title_en, alt_titles, description, type, episodes_total, episodes_duration, release_date, studio, source } = req.body;
   const poster_url = `/uploads/posters/${req.file.filename}`;
 
@@ -144,6 +282,75 @@ app.post("/anime/upload", upload.single("poster"), (req, res) => {
     res.json({ message: "Аниме добавлено", id: result.insertId });
   });
 });
+
+app.put("/api/anime/:id/edit", uploadPoster.single("poster"), (req, res) => {
+  const animeId = req.params.id;
+
+  const {
+    title,
+    title_en,
+    title_jp,
+    alt_titles,
+    description,
+    type,
+    status,
+    episodes_total,
+    episode_duration,
+    release_date,
+    studio,
+    source,
+  } = req.body;
+
+  const poster_url = req.file ? `/uploads/posters/${req.file.filename}` : null;
+
+  const sql = `
+    UPDATE anime
+    SET
+      title = ?,
+      title_en = ?,
+      title_jp = ?,
+      alt_titles = ?,
+      description = ?,
+      poster = CASE WHEN ? IS NOT NULL THEN ? ELSE poster END,
+      type = ?,
+      status = ?,
+      episodes_total = ?,
+      episode_duration = ?,
+      release_date = ?,
+      studio = ?,
+      source = ?
+    WHERE id = ?
+  `;
+
+  const values = [
+    title || null,
+    title_en || null,
+    title_jp || null,
+    alt_titles || null,
+    description || null,
+    poster_url,
+    poster_url,
+    type || null,
+    status || null,
+    episodes_total || null,
+    episode_duration || null,
+    release_date || null,
+    studio || null,
+    source || null,
+    animeId,
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Ошибка обновления аниме:", err);
+      return res.status(500).json({ error: "Ошибка при обновлении аниме" });
+    }
+
+    res.json({ message: "Аниме успешно обновлено" });
+  });
+});
+
+
 
 app.post("/api/ratings", (req, res) => {
   const { userId, animeId, rating } = req.body;
@@ -199,6 +406,52 @@ app.get("/api/anime/:animeId/average-rating", (req, res) => {
   });
 });
 
+app.get("/api/news", (req, res) => {
+  const q = req.query.q || "";
+  let sql = "SELECT * FROM news";
+  const params = [];
+  if (q) {
+    sql += " WHERE title LIKE ?";
+    params.push(`%${q}%`);
+  }
+  sql += " ORDER BY created_at DESC";
+  db.query(sql, params, (err, results) => {
+    if (err) return res.status(500).json({ error: "Ошибка" });
+    res.json(results);
+  });
+});
+
+
+app.post("/api/news/add", uploadImage.single("image"), (req, res) => {
+  const { title, content } = req.body;
+  const image = req.file ? `/uploads/images/${req.file.filename}` : null;
+
+  const sql = `
+    INSERT INTO news (title, content, image)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [title, content, image], (err, result) => {
+    if (err) {
+      console.error("Ошибка добавления новости:", err);
+      return res.status(500).json({ error: "Ошибка при добавлении новости" });
+    }
+    res.json({ message: "Новость добавлена", id: result.insertId });
+  });
+});
+
+app.delete("/api/news/:id", (req, res) => {
+  const newsId = req.params.id;
+  const sql = "DELETE FROM news WHERE id = ?";
+  db.query(sql, [newsId], (err, result) => {
+    if (err) {
+      console.error("Ошибка удаления новости:", err);
+      return res.status(500).json({ error: "Ошибка при удалении новости" });
+    }
+    res.json({ message: "Новость удалена" });
+  });
+});
+
 app.listen(3001, () => {
-  console.log("🚀 Бэкенд сервер запущен на http://localhost:3001");
+  console.log("Бэкенд сервер запущен на http://localhost:3001");
 });

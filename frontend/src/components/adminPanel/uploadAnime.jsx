@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import Header from "../components/header";
-import Footer from "../components/footer";
-import "../styles/uploadAnime.css";
+import "../../styles/uploadAnime.css";
 import axios from "axios";
 
 function UploadAnime() {
@@ -22,11 +20,17 @@ function UploadAnime() {
 
   const [posterPreview, setPosterPreview] = useState(null);
   const posterInputRef = useRef(null);
-  const [mounted, setMounted] = useState(false); // для безопасного рендера input
+  const [mounted, setMounted] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -47,10 +51,10 @@ function UploadAnime() {
       const res = await axios.post("http://localhost:3001/anime/upload", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Аниме добавлено! ID: " + res.data.id);
+      showToast(`Аниме успешно добавлено! ID: ${res.data.id}`, "success");
     } catch (err) {
       console.error(err);
-      alert("Ошибка при добавлении аниме");
+      showToast("Ошибка при добавлении аниме", "danger");
     }
   };
 
@@ -82,14 +86,9 @@ function UploadAnime() {
 
   return (
     <div className="Upload-page">
-      <div className="Upload-page-header">
-        <Header />
-      </div>
-
+      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
       <div className="Upload-page-main">
-        <div className="Web-border">
-          <div className="Title">Добавление аниме</div>
-        </div>
+        <div className="Title-admin">Добавление аниме</div>
         <form onSubmit={handleSubmit} className="Upload-form">
           <div className="Upload-main">
             <div className="Upload-inputs">
@@ -153,10 +152,6 @@ function UploadAnime() {
             </div>
           </div>
         </form>
-      </div>
-
-      <div className="Upload-page-footer">
-        <Footer />
       </div>
     </div>
   );

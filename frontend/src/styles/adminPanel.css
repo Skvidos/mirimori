@@ -1,0 +1,76 @@
+.Admin-panel-page-main {
+  padding: 30px 0;
+  min-height: calc(100vh - 120px - 200px);
+}
+
+.Admin-panel-box {
+  display: flex;
+  gap: 20px;
+}
+
+.Admin-panel-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.Admin-panel-tab-button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 21px;
+  border-radius: 15px;
+}
+
+.Admin-panel-tab-button.active {
+  background-color: #fadedc;
+}
+
+.Admin-panel-tab-button:hover {
+  background-color: #F08982;
+}
+
+.Admin-panel-content {
+  width: 1100px;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #fff;
+  z-index: 9999;
+  animation: fadeInOut 2.5s ease forwards;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-family: "Bellota Text";
+  font-size: 19px;
+}
+
+.toast.info {
+  background-color: #3498db;
+}
+
+.toast.success {
+  background-color: #2ecc71;
+}
+
+.toast.danger {
+  background-color: #e74c3c;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  10%, 90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

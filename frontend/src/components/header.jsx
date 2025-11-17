@@ -9,12 +9,11 @@ import { UserContext } from "../components/UserContext";
 
 function Header() {
   const navigate = useNavigate();
-  const { userLoggedIn, setUserLoggedIn, userAvatar, user } =
-    useContext(UserContext);
+  const { userLoggedIn, setUserLoggedIn, user } = useContext(UserContext);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const canUpload = user?.isAdmin || user?.isMods;
+  const isAdmin = user?.isAdmin || user?.isMods;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -46,7 +45,7 @@ function Header() {
             {userLoggedIn ? (
               <div className="User-block" style={{ position: "relative" }}>
                 <img
-                  src={userAvatar || userAvatarPlaceholder}
+                  src={user?.avatar_url || userAvatarPlaceholder}
                   alt="User Avatar"
                   className="User-avatar"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -62,8 +61,8 @@ function Header() {
                       Настройки
                     </Link>
 
-                    {canUpload && (
-                      <Link to="/uploadAnime" className="User-dropdown-button">
+                    {isAdmin && (
+                      <Link to="/adminPanel" className="User-dropdown-button">
                         Админ панель
                       </Link>
                     )}
