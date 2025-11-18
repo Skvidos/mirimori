@@ -1,0 +1,36 @@
+import Poster from "../assests/img/anime.png";
+
+function SliderMini({ title, items }) {
+  return (
+    <div className="Slider-block">
+      <div className="Slider-mini">
+        {items.length > 0 ? (
+          items.map((anime) => (
+            <div
+              key={anime.id}
+              className="SliderMini-item"
+              onClick={() => (window.location.href = `/anime/${anime.id}`)}
+            >
+              <img
+                src={anime.poster ? `${anime.poster}` : Poster}
+                alt={anime.title}
+                className="Anime-poster-mini"
+              />
+              <div className="Anime-info-mini">
+                <div className="Anime-title-mini">{anime.title}</div>
+                <div className="Anime-type">{anime.type || "TV"}</div>
+                <div className="Anime-addDate">
+                  {anime.created_at.slice(0, 10)}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="Empty">Нет данных</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default SliderMini;

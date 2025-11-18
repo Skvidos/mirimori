@@ -532,6 +532,23 @@ app.get("/api/stats/time/:userId", (req, res) => {
   });
 });
 
+app.get("/api/users/:id/animes", (req, res) => {
+  const userId = req.params.id;
+  const sql = `
+    SELECT a.*, ul.created_at AS added_at
+    FROM user_lists ul
+    JOIN anime a ON a.id = ul.item_id
+    WHERE ul.user_id = ?
+    ORDER BY ul.created_at DESC
+  `;
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при получении списка аниме" });
+    }
+    res.json(results);
+  });
+});
 
 
 app.listen(3001, () => {

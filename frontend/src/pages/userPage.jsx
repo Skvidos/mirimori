@@ -7,7 +7,7 @@ import NavBar from "../components/navBar";
 import Poster from "../assests/img/anime.png";
 import "../styles/userPage.css";
 import StarRating from "../components/StarRating";
-import Slider from "../components/slider";
+import SliderMini from "../components/sliderMini";
 import UserStats from "../components/statistics";
 
 function UserPage() {
@@ -77,34 +77,35 @@ function UserPage() {
                 Дата регистрации: {user.created_at.slice(0, 10)}
               </div>
             </div>
+
             <div className="User-page-content">
               <UserStats userId={id} />
+            </div>
 
+            <div className="User-page-right">
               <div className="User-animes-section">
-                <h2>Аниме пользователя</h2>
-                <Slider items={userAnimes} itemType="anime" />
-              </div>
-              <div className="User-reviews-section">
-                <h2>Отзывы пользователя</h2>
-                {userReviews.length > 0 ? (
-                  userReviews.map((review) => (
-                    <div key={review.id} className="User-review-item">
-                      <div className="User-review-item-title">
-                        {review.title}
-                      </div>
-                      <div className="User-review-item-content">
-                        {review.content}
-                      </div>
-                      <div className="User-review-item-rating">
-                        <StarRating rating={review.rating} />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="Empty">Нет данных</div>
-                )}
+                <div className="User-animes-title">История</div>
+                <SliderMini items={userAnimes} itemType="anime" />
               </div>
             </div>
+            {/* <div className="User-reviews-section">
+              <h2>Отзывы пользователя</h2>
+              {userReviews.length > 0 ? (
+                userReviews.map((review) => (
+                  <div key={review.id} className="User-review-item">
+                    <div className="User-review-item-title">{review.title}</div>
+                    <div className="User-review-item-content">
+                      {review.content}
+                    </div>
+                    <div className="User-review-item-rating">
+                      <StarRating rating={review.rating} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="Empty">Нет данных</div>
+              )}
+            </div> */}
           </div>
         </div>
       </div>
