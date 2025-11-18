@@ -1,0 +1,41 @@
+.user-stats {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stats-block {
+  margin: 20px 0;
+}
+
+.stats-grid {
+  display: flex;
+  gap: 10px;
+}
+
+.stats-item {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  color: white;
+  text-align: center;
+}
+
+.stats-item .label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.stats-item .count {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.stats-title {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.stats-item.planned { background-color: #ffce8a; color: #000;}
+.stats-item.watching { background-color: #ffa18a; }
+.stats-item.completed { background-color: #b27060; }
+.stats-item.dropped { background-color: #321f1b; }

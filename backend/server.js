@@ -43,6 +43,18 @@ app.get("/api/users", (req, res) => {
   });
 });
 
+app.get("/api/users/:id", (req, res) => {
+  const userId = req.params.id;
+  const sql = "SELECT * FROM users WHERE id = ?";
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("Ошибка получения пользователя:", err);
+      return res.status(500).json({ error: "Ошибка при получении данных" });
+    }
+    res.json(results[0]);
+  });
+});
+
 app.put("/api/users/:id/addMods", (req, res) => {
   const userId = req.params.id;
   const { isMods } = req.body;
@@ -451,6 +463,76 @@ app.delete("/api/news/:id", (req, res) => {
     res.json({ message: "Новость удалена" });
   });
 });
+
+
+app.get("/api/stats/anime/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  const sql = `
+    SELECT status, COUNT(*) AS count
+    FROM user_lists
+    WHERE user_id = ? AND item_type='anime'
+    GROUP BY status
+  `;
+
+  db.query(sql, [userId], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при получении статистики" });
+    }
+
+    const stats = { planned: 0, watching: 0, completed: 0, dropped: 0, on_hold: 0 };
+    rows.forEach(r => stats[r.status] = r.count);
+
+    res.json(stats);
+  });
+});
+
+app.get("/api/stats/manga/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  const sql = `
+    SELECT status, COUNT(*) AS count
+    FROM user_lists
+    WHERE user_id = ? AND item_type='manga'
+    GROUP BY status
+  `;
+
+  db.query(sql, [userId], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при получении статистики" });
+    }
+
+    const stats = { planned: 0, watching: 0, completed: 0 };
+    rows.forEach(r => stats[r.status] = r.count);
+
+    res.json(stats);
+  });
+});
+
+app.get("/api/stats/time/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  const sql = `
+    SELECT SUM(a.episodes_total * a.episode_duration) AS total_minutes
+    FROM user_lists ul
+    JOIN anime a ON a.id = ul.item_id
+    WHERE ul.user_id = ? AND ul.status = 'completed'
+  `;
+
+  db.query(sql, [userId], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при получении статистики" });
+    }
+
+    const total_minutes = rows[0]?.total_minutes || 0;
+    res.json({ total_minutes });
+  });
+});
+
+
 
 app.listen(3001, () => {
   console.log("Бэкенд сервер запущен на http://localhost:3001");
