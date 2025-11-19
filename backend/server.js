@@ -532,21 +532,101 @@ app.get("/api/stats/time/:userId", (req, res) => {
   });
 });
 
-app.get("/api/users/:id/animes", (req, res) => {
+app.get("/api/users/:id/anime", (req, res) => {
   const userId = req.params.id;
   const sql = `
-    SELECT a.*, ul.created_at AS added_at
-    FROM user_lists ul
-    JOIN anime a ON a.id = ul.item_id
+    SELECT a.*, ul.added_at AS added_at
+    FROM user_lists AS ul
+    JOIN anime AS a ON a.id = ul.item_id
     WHERE ul.user_id = ?
-    ORDER BY ul.created_at DESC
+    ORDER BY ul.added_at DESC
   `;
+
   db.query(sql, [userId], (err, results) => {
     if (err) {
-      console.error(err);
+      console.error("SQL error in /api/users/:id/anime:", err);
       return res.status(500).json({ error: "Ошибка при получении списка аниме" });
     }
+
     res.json(results);
+  });
+});
+
+app.get("/api/users/:id/favorites/anime", (req, res) => {
+  const userId = req.params.id;
+
+  const sql = `
+    SELECT a.*, f.added_at
+    FROM favorites f
+    JOIN anime a ON a.id = f.item_id
+    WHERE f.user_id = ? AND f.item_type = 'anime'
+    ORDER BY f.added_at DESC
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("SQL error:", err);
+      return res.status(500).json({ error: "Ошибка при получении избранных аниме" });
+    }
+    res.json(results);
+  });
+});
+
+app.get("/api/users/:id/favorites/manga", (req, res) => {
+  const userId = req.params.id;
+
+  const sql = `
+    SELECT m.*, f.added_at
+    FROM favorites f
+    JOIN manga m ON m.id = f.item_id
+    WHERE f.user_id = ? AND f.item_type = 'manga'
+    ORDER BY f.added_at DESC
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("SQL error:", err);
+      return res.status(500).json({ error: "Ошибка при получении избранной манги" });
+    }
+    res.json(results);
+  });
+});
+
+app.get("/api/users/:id/favorites/anime/stats", (req, res) => {
+  const userId = req.params.id;
+
+  const sql = `
+    SELECT COUNT(*) AS count
+    FROM favorites
+    WHERE user_id = ? AND item_type = 'anime'
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("SQL error:", err);
+      return res.status(500).json({ error: "Ошибка при получении статистики избранного аниме" });
+    }
+
+    res.json({ count: results[0].count });
+  });
+});
+
+app.get("/api/users/:id/favorites/manga/stats", (req, res) => {
+  const userId = req.params.id;
+
+  const sql = `
+    SELECT COUNT(*) AS count
+    FROM favorites
+    WHERE user_id = ? AND item_type = 'manga'
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("SQL error:", err);
+      return res.status(500).json({ error: "Ошибка при получении статистики избранной манги" });
+    }
+
+    res.json({ count: results[0].count });
   });
 });
 

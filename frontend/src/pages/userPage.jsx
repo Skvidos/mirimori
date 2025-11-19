@@ -4,16 +4,19 @@ import { UserContext } from "../components/UserContext";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import NavBar from "../components/navBar";
-import Poster from "../assests/img/anime.png";
 import "../styles/userPage.css";
-import StarRating from "../components/StarRating";
 import SliderMini from "../components/sliderMini";
+import Slider from "../components/slider";
 import UserStats from "../components/statistics";
 
 function UserPage() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [userAnimes, setUserAnimes] = useState([]);
+  const [userFavAnimes, setUserFavAnimes] = useState([]);
+  const [userFavMangas, setUserFavMangas] = useState([]);
+  const [countFavAnimes, setCountFavAnimes] = useState(0);
+  const [countFavMangas, setCountFavMangas] = useState(0);
   const [userReviews, setUserReviews] = useState([]);
 
   const { user: currentUser } = useContext(UserContext);
@@ -26,7 +29,7 @@ function UserPage() {
   }, [id]);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/users/${id}/animes`)
+    fetch(`http://localhost:3001/api/users/${id}/anime`)
       .then((res) => res.json())
       .then((data) => setUserAnimes(data))
       .catch((err) => console.error(err));
@@ -36,6 +39,34 @@ function UserPage() {
     fetch(`http://localhost:3001/api/users/${id}/reviews`)
       .then((res) => res.json())
       .then((data) => setUserReviews(data))
+      .catch((err) => console.error(err));
+  }, [id]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/api/users/${id}/favorites/anime`)
+      .then((res) => res.json())
+      .then((data) => setUserFavAnimes(data))
+      .catch((err) => console.error(err));
+  }, [id]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/api/users/${id}/favorites/manga`)
+      .then((res) => res.json())
+      .then((data) => setUserFavMangas(data))
+      .catch((err) => console.error(err));
+  }, [id]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/api/users/${id}/favorites/anime/stats`)
+      .then((res) => res.json())
+      .then((data) => setCountFavAnimes(data.count))
+      .catch((err) => console.error(err));
+  }, [id]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/api/users/${id}/favorites/manga/stats`)
+      .then((res) => res.json())
+      .then((data) => setCountFavMangas(data.count))
       .catch((err) => console.error(err));
   }, [id]);
 
@@ -88,24 +119,18 @@ function UserPage() {
                 <SliderMini items={userAnimes} itemType="anime" />
               </div>
             </div>
-            {/* <div className="User-reviews-section">
-              <h2>Отзывы пользователя</h2>
-              {userReviews.length > 0 ? (
-                userReviews.map((review) => (
-                  <div key={review.id} className="User-review-item">
-                    <div className="User-review-item-title">{review.title}</div>
-                    <div className="User-review-item-content">
-                      {review.content}
-                    </div>
-                    <div className="User-review-item-rating">
-                      <StarRating rating={review.rating} />
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="Empty">Нет данных</div>
-              )}
-            </div> */}
+          </div>
+
+          <div className="User-favorite-box">
+            <div className="Title">Избранное</div>
+            <div className="User-favorite-anime">
+              <div className="User-title">Аниме ({countFavAnimes})</div>
+              <Slider items={userFavAnimes} itemType="anime" />
+            </div>
+            <div className="User-favorite-manga">
+              <div className="User-title">Манга ({countFavMangas})</div>
+              <Slider items={userFavMangas} itemType="manga" />
+            </div>
           </div>
         </div>
       </div>
