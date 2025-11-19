@@ -666,6 +666,49 @@ app.get("/api/users/:id/reviews", (req, res) => {
 });
 
 
+app.post("/api/users/:userId/favorites/add", (req, res) => {
+  const { userId } = req.params;
+  const { item_id, item_type } = req.body;
+
+  if (!item_id || !item_type) {
+    return res.status(400).json({ error: "Не указан item_id или item_type" });
+  }
+
+  const sql = `
+    INSERT INTO favorites (user_id, item_id, item_type, added_at)
+    VALUES (?, ?, ?, NOW())
+    ON DUPLICATE KEY UPDATE added_at = NOW()
+  `;
+
+  db.query(sql, [userId, item_id, item_type], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при добавлении в избранное" });
+    }
+    res.json({ success: true });
+  });
+});
+
+app.delete("/api/users/:userId/favorites/delete", (req, res) => {
+  const { userId } = req.params;
+  const { item_id, item_type } = req.body;
+
+  if (!item_id || !item_type) {
+    return res.status(400).json({ error: "Не указан item_id или item_type" });
+  }
+
+  const sql = "DELETE FROM favorites WHERE user_id = ? AND item_id = ? AND item_type = ?";
+
+  db.query(sql, [userId, item_id, item_type], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при удалении из избранного" });
+    }
+    res.json({ success: true });
+  });
+});
+
+
 
 app.listen(3001, () => {
   console.log("Бэкенд сервер запущен на http://localhost:3001");

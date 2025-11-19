@@ -12,20 +12,76 @@ import Slider from "../components/slider";
 function AnimePage() {
   const { id } = useParams();
   const [anime, setAnime] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const { user } = useContext(UserContext);
+
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   useEffect(() => {
     fetch(`http://localhost:3001/anime/${id}`)
       .then((res) => res.json())
       .then((data) => setAnime(data))
       .catch((err) => console.error(err));
-  }, [id]);
+
+    if (user) {
+      fetch(`http://localhost:3001/api/users/${user.id}/favorites/anime`)
+        .then((res) => res.json())
+        .then((data) => {
+          const fav = data.find((item) => item.id === parseInt(id));
+          setIsFavorite(!!fav);
+        });
+    }
+  }, [id, user]);
+
+  const toggleFavorite = async () => {
+    if (!user) {
+      showToast("Пожалуйста, войдите в систему", "danger");
+      return;
+    }
+
+    try {
+      if (isFavorite) {
+        const res = await fetch(
+          `http://localhost:3001/api/users/${user.id}/favorites/delete`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ item_id: id, item_type: "anime" }),
+          }
+        );
+        if (!res.ok) throw new Error("Ошибка сервера");
+        showToast("Аниме удалено из избранного!", "success");
+        setIsFavorite(false);
+      } else {
+        const res = await fetch(
+          `http://localhost:3001/api/users/${user.id}/favorites/add`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ item_id: id, item_type: "anime" }),
+          }
+        );
+        if (!res.ok) throw new Error("Ошибка сервера");
+        showToast("Аниме добавлено в избранное!", "success");
+        setIsFavorite(true);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Ошибка при изменении избранного", "danger");
+    }
+  };
 
   if (!anime) return <div>Загрузка...</div>;
 
   return (
     <div className="Anime-page">
+      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
       <div className="Anime-page-header">
         <Header />
         <NavBar />
@@ -42,6 +98,13 @@ function AnimePage() {
                 alt={anime.title}
                 className="Anime-postres-img"
               />
+
+              <div
+                className={`Anime-fav-button ${isFavorite ? "favorite" : ""}`}
+                onClick={toggleFavorite}
+              >
+                {isFavorite ? "В избранном ❤️" : "Добавить в избранное 🤍"}
+              </div>
             </div>
 
             <div className="Anime-main-middle">

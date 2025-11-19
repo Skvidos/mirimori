@@ -31,6 +31,9 @@
 
 .Anime-postres-img {
   width: 250px;
+  height: 350px;
+  object-fit: cover;
+  margin-bottom: 20px;
 }
 
 .Anime-main-right {
@@ -100,4 +103,28 @@
   padding: 5px;
   background-color: #F08982;
   color: #fff
+}
+
+.Anime-fav-button {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid #fadedc;
+  border-radius: 5px;
+  text-align: center;
+  font-family: "Bellota Text";
+  font-size: 16px;
+  width: 250px;
+  transition: all 0.3s;
+  user-select: none;
+}
+
+.Anime-fav-button.favorite {
+  background-color: #F08982;
+  color: white;
+  font-weight: bold;
+}
+
+.Anime-fav-button:hover {
+  background-color: #e6392c;
+  color: white;
 }
