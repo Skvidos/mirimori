@@ -1,0 +1,58 @@
+.Slider-block {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.Slider-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.Slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 10px;
+  padding: 10px 0;
+  scrollbar-width: none; 
+}
+
+.Slider::-webkit-scrollbar {
+  display: none; 
+}
+
+.Slider-arrow {
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translateY(-50%) translateX(50%);
+  z-index: 10;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  opacity: 0.6;
+  font-family: "Bellota";
+}
+
+.Slider-arrow.left {
+  left: 0;
+}
+
+.Slider-arrow.right {
+  right: 0;
+}
+
+.Slider-arrow:hover {
+  opacity: 1;
+}
+
+.Slider-Arrow-img {
+  width: 50px;
+  height: 50px;
+}

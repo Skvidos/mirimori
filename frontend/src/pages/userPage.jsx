@@ -115,11 +115,11 @@ function UserPage() {
             <div className="Title">Избранное</div>
             <div className="User-favorite-anime">
               <div className="User-title">Аниме ({countFavAnimes})</div>
-              <Slider items={userFavAnimes} itemType="anime" />
+              <Slider items={userFavAnimes} itemType="anime" count={6} />
             </div>
             <div className="User-favorite-manga">
               <div className="User-title">Манга ({countFavMangas})</div>
-              <Slider items={userFavMangas} itemType="manga" />
+              <Slider items={userFavMangas} itemType="manga" count={6} />
             </div>
           </div>
 
