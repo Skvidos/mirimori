@@ -41,11 +41,3 @@ code {
   gap: 28px;
 }
 
-.Slider-mini {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  gap: 14px;
-  width: 350px;
-}
-

@@ -1,9 +1,18 @@
 import Poster from "../assests/img/anime.png";
 
-function SliderMini({ title, items }) {
+function SliderMini({ items, count = 5 }) {
+  const itemHeight = 100;
+  const containerHeight = Math.min(items.length, count) * itemHeight;
+
   return (
-    <div className="Slider-block">
-      <div className="Slider-mini">
+    <div className="SliderMini-block">
+      <div
+        className="Slider-mini"
+        style={{
+          maxHeight: `${containerHeight}px`,
+          overflowY: items.length > count ? "auto" : "hidden",
+        }}
+      >
         {items.length > 0 ? (
           items.map((anime) => (
             <div
@@ -12,7 +21,7 @@ function SliderMini({ title, items }) {
               onClick={() => (window.location.href = `/anime/${anime.id}`)}
             >
               <img
-                src={anime.poster ? `${anime.poster}` : Poster}
+                src={anime.poster ? anime.poster : Poster}
                 alt={anime.title}
                 className="Anime-poster-mini"
               />

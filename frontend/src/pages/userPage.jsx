@@ -106,7 +106,7 @@ function UserPage() {
             <div className="User-page-right">
               <div className="User-animes-section">
                 <div className="User-animes-title">История</div>
-                <SliderMini items={userAnimes} itemType="anime" />
+                <SliderMini items={userAnimes} itemType="anime" count={5} />
               </div>
             </div>
           </div>
