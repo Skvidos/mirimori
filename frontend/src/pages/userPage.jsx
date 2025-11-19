@@ -1,6 +1,5 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { UserContext } from "../components/UserContext";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import NavBar from "../components/navBar";
@@ -8,6 +7,7 @@ import "../styles/userPage.css";
 import SliderMini from "../components/sliderMini";
 import Slider from "../components/slider";
 import UserStats from "../components/statistics";
+import PostBox from "../components/postBox";
 
 function UserPage() {
   const { id } = useParams();
@@ -17,9 +17,6 @@ function UserPage() {
   const [userFavMangas, setUserFavMangas] = useState([]);
   const [countFavAnimes, setCountFavAnimes] = useState(0);
   const [countFavMangas, setCountFavMangas] = useState(0);
-  const [userReviews, setUserReviews] = useState([]);
-
-  const { user: currentUser } = useContext(UserContext);
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/users/${id}`)
@@ -32,13 +29,6 @@ function UserPage() {
     fetch(`http://localhost:3001/api/users/${id}/anime`)
       .then((res) => res.json())
       .then((data) => setUserAnimes(data))
-      .catch((err) => console.error(err));
-  }, [id]);
-
-  useEffect(() => {
-    fetch(`http://localhost:3001/api/users/${id}/reviews`)
-      .then((res) => res.json())
-      .then((data) => setUserReviews(data))
       .catch((err) => console.error(err));
   }, [id]);
 
@@ -131,6 +121,11 @@ function UserPage() {
               <div className="User-title">Манга ({countFavMangas})</div>
               <Slider items={userFavMangas} itemType="manga" />
             </div>
+          </div>
+
+          <div className="User-reviews-section">
+            <div className="Title">Отзывы пользователя</div>
+            <PostBox user={user} />
           </div>
         </div>
       </div>

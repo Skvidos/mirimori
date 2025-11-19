@@ -1,0 +1,80 @@
+.PostBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 50px 0;
+}
+
+.PostBox-item {
+  padding: 32px 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 1200px;
+}
+
+.PostBox-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.PostBox-item-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.PostBox-title-text {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 32px;
+  color: #000;
+  cursor: pointer;
+} 
+
+.PostBox-username{
+  font-family: "Bellota Text";
+  font-weight: 400;
+  font-size: 15px;
+  color: #787878;
+  cursor: pointer;
+}
+
+.PostBox-text {
+  font-family: "Bellota Text";
+  font-weight: 400;
+  font-size: 20px;
+  color: #000;
+  text-wrap: wrap;
+}
+
+.PostBox-image {
+  height: 250px;
+  width: 177px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.PostBox-date {
+  font-family: "Bellota Text";
+  font-weight: 400;
+  font-size: 15px;
+  color: #787878;
+  text-align: right;
+}
+
+.PostBox-item-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}

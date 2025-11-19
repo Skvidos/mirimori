@@ -630,6 +630,42 @@ app.get("/api/users/:id/favorites/manga/stats", (req, res) => {
   });
 });
 
+app.get("/api/users/:id/reviews", (req, res) => {
+  const userId = req.params.id;
+
+  const sql = `
+    SELECT r.id AS review_id,
+           r.item_type,
+           r.item_id,
+           r.rating,
+           r.content,
+           r.created_at,
+           CASE 
+             WHEN r.item_type = 'anime' THEN a.title
+             WHEN r.item_type = 'manga' THEN m.title
+           END AS title,
+           CASE 
+             WHEN r.item_type = 'anime' THEN a.poster
+             ELSE NULL
+           END AS poster
+    FROM reviews r
+    LEFT JOIN anime a ON r.item_type = 'anime' AND r.item_id = a.id
+    LEFT JOIN manga m ON r.item_type = 'manga' AND r.item_id = m.id
+    WHERE r.user_id = ?
+    ORDER BY r.created_at DESC
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("SQL error:", err);
+      return res.status(500).json({ error: "Ошибка при получении отзывов пользователя" });
+    }
+
+    res.json(results);
+  });
+});
+
+
 
 app.listen(3001, () => {
   console.log("Бэкенд сервер запущен на http://localhost:3001");
