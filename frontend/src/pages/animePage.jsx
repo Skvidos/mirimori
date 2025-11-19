@@ -13,6 +13,8 @@ function AnimePage() {
   const { id } = useParams();
   const [anime, setAnime] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [watchStatus, setWatchStatus] = useState("planned");
+  const [progress, setProgress] = useState(0);
 
   const { user } = useContext(UserContext);
 
@@ -38,6 +40,19 @@ function AnimePage() {
         });
     }
   }, [id, user]);
+
+  useEffect(() => {
+    if (user) {
+      fetch(`http://localhost:3001/api/users/${user.id}/anime-status/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setWatchStatus(data.status);
+            setProgress(data.progress || 0);
+          }
+        });
+    }
+  }, [user, id]);
 
   const toggleFavorite = async () => {
     if (!user) {
@@ -77,6 +92,74 @@ function AnimePage() {
     }
   };
 
+  const saveStatus = async (newStatus, newEpisodes) => {
+    if (!user) {
+      showToast("Пожалуйста, войдите", "danger");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:3001/api/users/${user.id}/anime-status/${id}`, // <- id вместо "save"
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: newStatus,
+            progress: newEpisodes,
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Ошибка сервера");
+
+      showToast("Статус обновлён!", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Ошибка при обновлении статуса", "danger");
+    }
+  };
+
+  const handleStatusChange = (e) => {
+    const newStatus = e.target.value;
+
+    let episodesToSave = progress;
+
+    if (newStatus === "completed") {
+      episodesToSave = anime.episodes_total;
+      setProgress(anime.episodes_total);
+    }
+
+    setWatchStatus(newStatus);
+    saveStatus(newStatus, episodesToSave);
+  };
+
+  const updateWatchedEpisodes = async (newEpisodes) => {
+    if (!user) {
+      showToast("Пожалуйста, войдите в систему", "danger");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:3001/api/users/${user.id}/anime-status/${id}/episodes`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ progress: newEpisodes }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Ошибка сервера");
+
+      setProgress(newEpisodes);
+      showToast("Количество просмотренных серий обновлено!", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Ошибка при обновлении серий", "danger");
+    }
+  };
+
   if (!anime) return <div>Загрузка...</div>;
 
   return (
@@ -104,6 +187,64 @@ function AnimePage() {
                 onClick={toggleFavorite}
               >
                 {isFavorite ? "В избранном ❤️" : "Добавить в избранное 🤍"}
+              </div>
+
+              <div className="Anime-status-box">
+                <div className="Anime-status-title">Статус просмотра</div>
+
+                <select
+                  className="Anime-status-select"
+                  value={watchStatus}
+                  onChange={handleStatusChange}
+                >
+                  <option value="watching">Смотрю</option>
+                  <option value="completed">Просмотрено</option>
+                  <option value="planned">В планах</option>
+                  <option value="dropped">Отложено</option>
+                </select>
+
+                {watchStatus === "watching" && (
+                  <div className="Episodes-box">
+                    <div className="Anime-status-title">Просмотрено серий:</div>
+                    <div className="Episodes-controls">
+                      <button
+                        className="Episode-btn"
+                        onClick={() =>
+                          updateWatchedEpisodes(Math.max(0, progress - 1))
+                        }
+                      >
+                        -
+                      </button>
+
+                      <input
+                        type="number"
+                        className="Episodes-input"
+                        value={progress}
+                        onChange={(e) =>
+                          updateWatchedEpisodes(
+                            Math.min(
+                              Math.max(0, Number(e.target.value)),
+                              anime.episodes_total
+                            )
+                          )
+                        }
+                        min="0"
+                        max={anime.episodes_total}
+                      />
+
+                      <button
+                        className="Episode-btn"
+                        onClick={() =>
+                          updateWatchedEpisodes(
+                            Math.min(progress + 1, anime.episodes_total)
+                          )
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

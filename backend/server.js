@@ -708,6 +708,83 @@ app.delete("/api/users/:userId/favorites/delete", (req, res) => {
   });
 });
 
+app.get("/api/users/:userId/anime-status/:animeId", (req, res) => {
+  const { userId, animeId } = req.params;
+
+  const sql = `
+    SELECT status, progress 
+    FROM user_lists
+    WHERE user_id = ? AND item_id = ? AND item_type = 'anime'
+  `;
+
+  db.query(sql, [userId, animeId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Ошибка сервера" });
+
+    if (results.length === 0) {
+      return res.json({ status: null, progress: 0 });
+    }
+
+    res.json(results[0]);
+  });
+});
+
+app.get("/api/users/:userId/anime-status", (req, res) => {
+  const { userId } = req.params;
+
+  const sql = `
+    SELECT item_id, status, progress
+    FROM user_lists
+    WHERE user_id = ? AND item_type = 'anime'
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Ошибка сервера" });
+
+    res.json(results);
+  });
+});
+
+app.post("/api/users/:userId/anime-status/:animeId", (req, res) => {
+  const { userId, animeId } = req.params;
+  const { status, progress } = req.body;
+
+  if (!status) return res.status(400).json({ error: "Статус обязателен" });
+
+  const sql = `
+    INSERT INTO user_lists (user_id, item_id, item_type, status, progress)
+    VALUES (?, ?, 'anime', ?, ?)
+    ON DUPLICATE KEY UPDATE
+      status = VALUES(status),
+      progress = VALUES(progress)
+  `;
+
+  db.query(sql, [userId, animeId, status, progress ?? 0], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка сервера" });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+app.post("/api/users/:userId/anime-status/:animeId/episodes", (req, res) => {
+  const { userId, animeId } = req.params;
+  const { progress } = req.body;
+
+  const sql = `
+    UPDATE user_lists
+    SET progress = ?
+    WHERE user_id = ? AND item_id = ? AND item_type = 'anime'
+  `;
+
+  db.query(sql, [progress, userId, animeId], (err) => {
+    if (err) return res.status(500).json({ error: "Ошибка сервера" });
+    res.json({ success: true });
+  });
+});
+
+
 
 
 app.listen(3001, () => {

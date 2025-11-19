@@ -11,8 +11,6 @@ function PostBox({ user }) {
       .catch((err) => console.error(err));
   }, [user.id]);
 
-  console.log(posts);
-
   return (
     <div className="PostBox">
       {posts.length > 0 ? (
@@ -26,7 +24,6 @@ function PostBox({ user }) {
                   className="PostBox-avatar"
                   onClick={() => (window.location.href = `/user/${user.id}`)}
                 />
-                {console.log(post)}
                 <div className="PostBox-title">
                   <div
                     className="PostBox-title-text"
