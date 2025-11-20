@@ -5,7 +5,6 @@ import "../styles/postBox.css";
 
 function PostBox({ anime, currentUser }) {
   const [posts, setPosts] = useState([]);
-
   const [toast, setToast] = useState(null);
 
   const { user } = useContext(UserContext);
@@ -137,7 +136,9 @@ function PostBox({ anime, currentUser }) {
                   (window.location.href = `/anime/${post.item_id}`)
                 }
               />
-              <div className="PostBox-date">{post.created_at.slice(0, 10)}</div>
+              <div className="PostBox-date">
+                {post.created_at?.slice(0, 10)}
+              </div>
             </div>
           </div>
         ))

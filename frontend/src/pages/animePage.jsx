@@ -174,16 +174,16 @@ function AnimePage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: user.id,
-            content: reviewText,
-          }),
+          body: JSON.stringify({ user_id: user.id, content: reviewText }),
         }
       );
 
       if (!res.ok) throw new Error("Ошибка сервера");
 
+      setReviewText("");
       showToast("Отзыв успешно добавлен!", "success");
+
+      setTimeout(() => window.location.reload(), 500);
     } catch (err) {
       console.error(err);
       showToast("Ошибка при добавлении отзыва", "danger");
@@ -338,9 +338,9 @@ function AnimePage() {
             <div className="Anime-reviews-create">
               <div className="Anime-reviews-create-box">
                 <div className="Anime-reviews-title">Добавить отзыв</div>
-                <input
+                <textarea
                   type="text"
-                  className="Anime-reviews-input"
+                  className="Anime-reviews-textarea"
                   placeholder="Оставьте отзыв"
                   value={reviewText}
                   onChange={(e) => setReviewText(e.target.value)}
