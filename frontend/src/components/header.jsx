@@ -54,7 +54,10 @@ function Header() {
 
                 {dropdownOpen && (
                   <div className="User-dropdown">
-                    <Link to="/profile" className="User-dropdown-button">
+                    <Link
+                      to={`/user/${user?.id}`}
+                      className="User-dropdown-button"
+                    >
                       Профиль
                     </Link>
                     <Link to="/settings" className="User-dropdown-button">

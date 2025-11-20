@@ -34,11 +34,15 @@ function Main() {
       <div className="Main-content">
         <div className="Web-border">
           <div className="Main-new">
-            <Slider title="Новинки" items={newTitles} />
+            <Slider title="Новинки" items={newTitles} count={6} />
           </div>
 
           <div className="Main-last">
-            <Slider title="Последние просмотренные" items={lastWatched} />
+            <Slider
+              title="Последние просмотренные"
+              items={lastWatched}
+              сount={6}
+            />
           </div>
 
           <div className="Main-news">

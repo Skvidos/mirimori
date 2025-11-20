@@ -7,6 +7,41 @@
   cursor: pointer;
 }
 
+.SliderMini-item {
+  width: 350px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+}
+
+.Slider-mini::-webkit-scrollbar {
+  width: 6px; 
+}
+
+.SliderMini-block {
+  width: 100%;
+}
+
+.Slider-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #aaa transparent;
+  width: 350px;
+}
+
+.Slider-mini::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 3px;
+}
+
+.Slider-mini::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
 .Anime-title {
   font-family: "Bellota Text";
   font-weight: 700;
@@ -18,6 +53,16 @@
   margin-top: 10px;
 }
 
+.Anime-title-mini {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .Anime-type {
   font-family: "Bellota Text";
   font-weight: 700;
@@ -25,6 +70,26 @@
   line-height: 1;
   color: #787878;
   margin-top: 5px;
+}
+
+.Anime-info-mini {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+  width: 230px;
+}
+
+.Anime-addDate {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  color: #787878;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .Main-new,
@@ -35,6 +100,11 @@
 .Anime-poster {
   width: 200px;
   height: 287px;
+}
+
+.Anime-poster-mini {
+  width: 60px;
+  height: 86px;
 }
 
 .Stars {

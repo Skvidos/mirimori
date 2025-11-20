@@ -31,6 +31,9 @@
 
 .Anime-postres-img {
   width: 250px;
+  height: 350px;
+  object-fit: cover;
+  margin-bottom: 20px;
 }
 
 .Anime-main-right {
@@ -100,4 +103,150 @@
   padding: 5px;
   background-color: #F08982;
   color: #fff
+}
+
+.Anime-fav-button {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid #fadedc;
+  border-radius: 5px;
+  text-align: center;
+  font-family: "Bellota Text";
+  font-size: 16px;
+  width: 250px;
+  transition: all 0.3s;
+  user-select: none;
+}
+
+.Anime-fav-button.favorite {
+  background-color: #F08982;
+  color: #fff;
+  font-weight: bold;
+}
+
+.Anime-fav-button:hover {
+  background-color: #e6392c;
+  color: #fff;
+}
+
+.Anime-status-box {
+  margin-top: 20px;
+}
+
+.Anime-status-select {
+  width: 250px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: "Bellota Text";
+  font-size: 16px;
+  color: #000;
+  margin-top: 8px;
+}
+
+.Episodes-box {
+  margin-top: 20px;
+}
+
+.Episodes-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  gap: 10px;
+}
+
+.Episode-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background-color: #F08982;
+  border: none;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.Episode-btn:hover {
+  background-color: #e6392c;
+}
+
+.Episodes-input {
+  background: #fff;
+  border: 1px solid #444;
+  color: #000;
+  text-align: center;
+  border-radius: 6px;
+  font-family: "Bellota Text";
+  font-size: 16px;
+  font-weight: 700;
+  padding: 5px 10px;
+  width: 100px;
+}
+
+.Episodes-input::-webkit-outer-spin-button,
+.Episodes-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.Episodes-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.Anime-status-title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.Anime-reviews-create-box {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.Anime-reviews-title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.Anime-reviews-textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: "Bellota Text";
+  font-size: 16px;
+  color: #000;
+  margin-top: 8px;
+}
+
+.Anime-reviews-create-btn {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid #fadedc;
+  border-radius: 5px;
+  text-align: center;
+  font-family: "Bellota Text";
+  font-size: 16px;
+  width: 250px;
+  transition: all 0.3s;
+  user-select: none;
+  margin-top: 20px;
+  background-color: #F08982;
+  color: #fff;
+  font-weight: bold;
+}
+
+.Anime-reviews-create-btn:hover {
+  background-color: #e6392c;
+  color: #fff;
 }

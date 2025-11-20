@@ -7,6 +7,13 @@ function StarRating({ animeId, userId }) {
   const [avgRating, setAvgRating] = useState(null);
   const [totalVotes, setTotalVotes] = useState(0);
 
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
+
   useEffect(() => {
     if (userId) {
       axios
@@ -30,7 +37,7 @@ function StarRating({ animeId, userId }) {
 
   const handleRating = async (value) => {
     if (!userId) {
-      alert("Войдите в систему, чтобы поставить оценку!");
+      showToast("Войдите, чтобы поставить оценку", "danger");
       return;
     }
 
@@ -43,6 +50,7 @@ function StarRating({ animeId, userId }) {
 
   return (
     <div className="Anime-rating-stars-items">
+      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
       <div className="Anime-rating-stars-item">
         {[1, 2, 3, 4, 5].map((star) => (
           <span

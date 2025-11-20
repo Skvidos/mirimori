@@ -1,0 +1,58 @@
+.User-page-left {
+  width: 310px;
+}
+
+.User-page-right {
+  width: 350px;
+}
+
+.User-avatar-box {
+  width: 305px;
+  height: 305px;
+}
+
+.User-avatar-box {
+  margin-bottom: 15px;
+}
+
+.User-info-box {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 20px;
+  color: #000;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
+.User-registration {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 20px;
+  color: #000;
+  display: flex;
+  justify-content: center;
+}
+
+.User-page-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 65px;
+}
+
+.User-animes-title {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+.User-favorite-anime {
+  margin-bottom: 40px;
+}
+
+.User-favorite-box {
+  margin-bottom: 40px;
+}
