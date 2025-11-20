@@ -741,6 +741,27 @@ app.post("/api/users/:userId/reviews/anime/:animeId/add", (req, res) => {
   });
 });
 
+app.delete("/api/reviews/:postId/delete", (req, res) => {
+  const { user_id } = req.body;
+  const { postId } = req.params;
+
+  db.query("SELECT * FROM reviews WHERE id = ?", [postId], (err, result) => {
+    if (err) return res.status(500).json({ error: "Ошибка сервера" });
+    if (!result.length) return res.status(404).json({ error: "Отзыв не найден" });
+
+    const post = result[0];
+
+    if (post.user_id !== user_id) {
+      return res.status(403).json({ error: "Нет прав на удаление" });
+    }
+
+    db.query("DELETE FROM reviews WHERE id = ?", [postId], (err2) => {
+      if (err2) return res.status(500).json({ error: "Ошибка при удалении" });
+      res.json({ success: true });
+    });
+  });
+});
+
 
 app.post("/api/users/:userId/favorites/add", (req, res) => {
   const { userId } = req.params;

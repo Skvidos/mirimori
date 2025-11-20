@@ -125,7 +125,7 @@ function UserPage() {
 
           <div className="User-reviews-section">
             <div className="Title">Отзывы пользователя</div>
-            <PostBox user={user} />
+            <PostBox currentUser={user} />
           </div>
         </div>
       </div>

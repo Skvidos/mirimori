@@ -78,3 +78,25 @@
   justify-content: space-between;
   gap: 10px;
 }
+
+.PostBox-item-right {
+  position: relative;
+}
+
+.PostBox-delete-btn {
+  display: flex;
+  gap: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 5px;
+  border-radius: 6px;
+  width: 35px;
+  height: 35px;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+}
+
+.PostBox-delete-btn:hover {
+  background-color: #acacac;
+}
