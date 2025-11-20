@@ -634,23 +634,38 @@ app.get("/api/users/:id/reviews", (req, res) => {
   const userId = req.params.id;
 
   const sql = `
-    SELECT r.id AS review_id,
-           r.item_type,
-           r.item_id,
-           r.rating,
-           r.content,
-           r.created_at,
-           CASE 
-             WHEN r.item_type = 'anime' THEN a.title
-             WHEN r.item_type = 'manga' THEN m.title
-           END AS title,
-           CASE 
-             WHEN r.item_type = 'anime' THEN a.poster
-             ELSE NULL
-           END AS poster
+    SELECT 
+      r.id AS id,
+      r.content,
+      r.rating,
+      r.item_type,
+      r.item_id,
+      r.created_at,
+
+      -- Автор отзыва
+      u.id AS user_id,
+      u.username,
+      u.avatar_url,
+
+      CASE 
+        WHEN r.item_type = 'anime' THEN a.title
+        WHEN r.item_type = 'manga' THEN m.title
+      END AS title,
+
+      CASE 
+        WHEN r.item_type = 'anime' THEN a.poster
+        ELSE NULL
+      END AS poster
+
     FROM reviews r
-    LEFT JOIN anime a ON r.item_type = 'anime' AND r.item_id = a.id
-    LEFT JOIN manga m ON r.item_type = 'manga' AND r.item_id = m.id
+    JOIN users u ON r.user_id = u.id
+    LEFT JOIN anime a 
+      ON r.item_type = 'anime' 
+      AND r.item_id = a.id
+    LEFT JOIN manga m 
+      ON r.item_type = 'manga' 
+      AND r.item_id = m.id
+
     WHERE r.user_id = ?
     ORDER BY r.created_at DESC
   `;
@@ -662,6 +677,67 @@ app.get("/api/users/:id/reviews", (req, res) => {
     }
 
     res.json(results);
+  });
+});
+
+app.get("/api/anime/:id/reviews", (req, res) => {
+  const animeId = req.params.id;
+
+  const sql = `
+    SELECT 
+      r.id AS id,
+      r.content,
+      r.rating,
+      r.item_type,
+      r.item_id,
+      r.created_at,
+
+      u.id AS user_id,
+      u.username,
+      u.avatar_url,
+
+      a.title AS title,
+      a.poster AS poster
+
+    FROM reviews r
+    JOIN users u ON r.user_id = u.id
+    JOIN anime a ON r.item_id = a.id AND r.item_type = 'anime'
+
+    WHERE r.item_id = ?
+      AND r.item_type = 'anime'
+    ORDER BY r.created_at DESC
+  `;
+
+  db.query(sql, [animeId], (err, results) => {
+    if (err) {
+      console.error("SQL error:", err);
+      return res.status(500).json({ error: "Ошибка при получении отзывов об аниме" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.post("/api/users/:userId/reviews/anime/:animeId/add", (req, res) => {
+  const { userId } = req.params;
+  const { animeId } = req.params;
+  const { content } = req.body;
+
+  if (!content) {
+    return res.status(400).json({ error: "Недостаточно данных для создания отзыва" });
+  }
+
+  const sql = `
+    INSERT INTO reviews (user_id, item_id, item_type, content, rating, created_at)
+    VALUES (?, ?, 'anime', ?, 0, NOW())
+  `;
+
+  db.query(sql, [userId, animeId, content], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при добавлении отзыва" });
+    }
+    res.json({ success: true });
   });
 });
 

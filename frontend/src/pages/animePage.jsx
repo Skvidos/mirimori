@@ -8,6 +8,7 @@ import Poster from "../assests/img/anime.png";
 import "../styles/animePage.css";
 import StarRating from "../components/StarRating";
 import Slider from "../components/slider";
+import PostBox from "../components/postBox";
 
 function AnimePage() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ function AnimePage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [watchStatus, setWatchStatus] = useState("planned");
   const [progress, setProgress] = useState(0);
+  const [reviewText, setReviewText] = useState("");
 
   const { user } = useContext(UserContext);
 
@@ -157,6 +159,34 @@ function AnimePage() {
     } catch (err) {
       console.error(err);
       showToast("Ошибка при обновлении серий", "danger");
+    }
+  };
+
+  const addReview = async (reviewText) => {
+    if (!user) {
+      showToast("Пожалуйста, войдите в систему", "danger");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:3001/api/users/${user.id}/reviews/anime/${id}/add`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: user.id,
+            content: reviewText,
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Ошибка сервера");
+
+      showToast("Отзыв успешно добавлен!", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Ошибка при добавлении отзыва", "danger");
     }
   };
 
@@ -304,7 +334,29 @@ function AnimePage() {
           </div>
 
           <div className="Title">Отзывы</div>
-          <div className="Anime-reviews-box">Отзывы отсутствуют</div>
+          <div className="Anime-reviews-box">
+            <div className="Anime-reviews-create">
+              <div className="Anime-reviews-create-box">
+                <div className="Anime-reviews-title">Добавить отзыв</div>
+                <input
+                  type="text"
+                  className="Anime-reviews-input"
+                  placeholder="Оставьте отзыв"
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                />
+                <div
+                  className="Anime-reviews-create-btn"
+                  onClick={() => {
+                    addReview(reviewText);
+                  }}
+                >
+                  Добавить
+                </div>
+              </div>
+            </div>
+            <PostBox anime={anime} />
+          </div>
         </div>
       </div>
 

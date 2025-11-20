@@ -1,29 +1,44 @@
 import { useEffect, useState } from "react";
 import "../styles/postBox.css";
 
-function PostBox({ user }) {
+function PostBox({ user, anime }) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/users/${user.id}/reviews`)
+    let url = null;
+
+    if (user) {
+      url = `http://localhost:3001/api/users/${user.id}/reviews`;
+    }
+
+    if (anime) {
+      url = `http://localhost:3001/api/anime/${anime.id}/reviews`;
+    }
+
+    if (!url) return;
+
+    fetch(url)
       .then((res) => res.json())
       .then((data) => setPosts(data))
       .catch((err) => console.error(err));
-  }, [user.id]);
+  }, [user, anime]);
 
   return (
     <div className="PostBox">
       {posts.length > 0 ? (
         posts.map((post) => (
-          <div className="PostBox-item">
+          <div className="PostBox-item" key={post.id}>
             <div className="PostBox-item-right">
               <div className="PostBox-item-header">
                 <img
-                  src={user.avatar_url}
+                  src={post.avatar_url}
                   alt=""
                   className="PostBox-avatar"
-                  onClick={() => (window.location.href = `/user/${user.id}`)}
+                  onClick={() =>
+                    (window.location.href = `/user/${post.user_id}`)
+                  }
                 />
+
                 <div className="PostBox-title">
                   <div
                     className="PostBox-title-text"
@@ -33,16 +48,21 @@ function PostBox({ user }) {
                   >
                     {post.title}
                   </div>
+
                   <div
                     className="PostBox-username"
-                    onClick={() => (window.location.href = `/user/${user.id}`)}
+                    onClick={() =>
+                      (window.location.href = `/user/${post.user_id}`)
+                    }
                   >
-                    от {user.username}
+                    от {post.username}
                   </div>
                 </div>
               </div>
+
               <div className="PostBox-text">{post.content}</div>
             </div>
+
             <div className="PostBox-item-left">
               <img
                 src={post.poster}
@@ -62,4 +82,5 @@ function PostBox({ user }) {
     </div>
   );
 }
+
 export default PostBox;
