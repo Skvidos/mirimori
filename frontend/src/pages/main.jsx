@@ -17,12 +17,14 @@ function Main() {
       .then((res) => res.json())
       .then((data) => setNewTitles(data))
       .catch((err) => console.error(err));
+  }, []);
 
-    fetch("http://localhost:3001/anime/last-watched")
+  if (user) {
+    fetch(`http://localhost:3001/api/users/${user.id}/anime`)
       .then((res) => res.json())
       .then((data) => setLastWatched(data))
       .catch((err) => console.error(err));
-  }, []);
+  }
 
   return (
     <div className="Main-page">
@@ -41,7 +43,7 @@ function Main() {
             <Slider
               title="Последние просмотренные"
               items={lastWatched}
-              сount={6}
+              count={6}
             />
           </div>
 
