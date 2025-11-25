@@ -2,6 +2,10 @@
   height: 100vh;
 }
 
+.Main-content {
+  min-height: calc(100vh - 120px - 200px);
+}
+
 .Slider-item {
   width: 200px;
   cursor: pointer;

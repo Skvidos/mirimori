@@ -93,12 +93,53 @@ app.delete("/api/users/:id/delete", async (req, res) => {
   });
 });
 
+app.get("/api/manga", (req, res) => {
+  const {
+    q = "",
+    type = "",
+    status = "",
+    sort = "asc",
+    page = 1,
+    limit = 10,
+  } = req.query;
+
+  const offset = (page - 1) * limit;
+
+  let sql = "SELECT * FROM manga WHERE 1=1";
+  const params = [];
+
+  if (q) {
+    sql += " AND (title LIKE ? OR title_en LIKE ? OR title_jp LIKE ?)";
+    const searchTerm = `%${q}%`;
+    params.push(searchTerm, searchTerm, searchTerm);
+  }
+  if (type) {
+    sql += " AND type = ?";
+    params.push(type);
+  }
+  if (status) {
+    sql += " AND status = ?";
+    params.push(status);
+  }
+
+  sql += ` ORDER BY id ${sort === "desc" ? "DESC" : "ASC"}`;
+  sql += " LIMIT ? OFFSET ?";
+  params.push(Number(limit), Number(offset));
+
+  db.query(sql, params, (err, results) => {
+    if (err) {
+      console.error("Ошибка получения списка аниме:", err);
+      return res.status(500).json({ error: "Ошибка при получении данных" });
+    }
+    res.json(results);
+  });
+});
+
 app.get("/api/anime", (req, res) => {
   const {
     q = "",
     type = "",
     status = "",
-    year = "",
     sort = "asc",
     page = 1,
     limit = 10,
@@ -122,10 +163,6 @@ app.get("/api/anime", (req, res) => {
     sql += " AND status = ?";
     params.push(status);
   }
-  if (year) {
-    sql += " AND release LIKE ?";
-    params.push(`${year}%`);
-  }
 
   sql += ` ORDER BY id ${sort === "desc" ? "DESC" : "ASC"}`;
   sql += " LIMIT ? OFFSET ?";
@@ -146,10 +183,6 @@ app.get("/api/anime", (req, res) => {
   if (status) {
     countSql += " AND status = ?";
     countParams.push(status);
-  }
-  if (year) {
-    countSql += " AND release LIKE ?";
-    countParams.push(`${year}%`);
   }
 
   db.query(sql, params, (err, rows) => {

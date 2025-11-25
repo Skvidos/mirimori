@@ -2,9 +2,9 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 import NavBar from "../components/navBar";
 
-import AnimeLists from "../components/animeLists";
+import MangaLists from "../components/mangaLists";
 
-function AnimeList() {
+function MangaList() {
   return (
     <div className="Main-page">
       <div className="Main-page-header">
@@ -15,8 +15,8 @@ function AnimeList() {
       <div className="Main-content">
         <div className="Web-border">
           <div className="Main-new">
-            <div className="Title">Список аниме</div>
-            <AnimeLists />
+            <div className="Title">Список манг</div>
+            <MangaLists />
           </div>
         </div>
       </div>
@@ -26,4 +26,4 @@ function AnimeList() {
   );
 }
 
-export default AnimeList;
+export default MangaList;

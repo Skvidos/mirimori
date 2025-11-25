@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Poster from "../../assests/img/anime.png";
-import "../../styles/contentMods.css";
+import Poster from "../assests/img/anime.png";
+import "../styles/contentMods.css";
 import axios from "axios";
-import useDebouncedState from "../../hooks/useDebouncedState.jsx";
+import useDebouncedState from "../hooks/useDebouncedState.jsx";
 
 function AnimeLists() {
   const [loading, setLoading] = useState(true);

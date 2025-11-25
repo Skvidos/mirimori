@@ -3,8 +3,7 @@ import "../styles/navbar.css";
 function NavBar() {
   const navItems = [
     { label: "Аниме", link: "/anime" },
-    { label: "Манга", link: "#" },
-    { label: "Ранобэ", link: "#" },
+    { label: "Манга", link: "/manga" },
     { label: "Рецензии", link: "#" },
     { label: "Пользователи", link: "#" },
     { label: "Новости", link: "#" },
