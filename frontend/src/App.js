@@ -8,6 +8,7 @@ import AnimePage from './pages/animePage';
 import ProtectedRoute from './components/protectedRoute';
 import AdminPanel from './pages/adminPanel';
 import UserPage from './pages/userPage';
+import AnimeList from './pages/animeList';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -35,6 +36,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/anime" element={<AnimeList />} />
         <Route path="/anime/:id" element={<AnimePage />} />
         <Route path="/user/:id" element={<UserPage />} />
         <Route path="/adminPanel" element={

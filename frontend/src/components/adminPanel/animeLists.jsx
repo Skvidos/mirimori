@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import Poster from "../../assests/img/anime.png";
 import "../../styles/contentMods.css";
-import Edit from "../../assests/svg/wrench-solid-full.svg";
-import Delete from "../../assests/svg/ban-solid-full.svg";
-import Modal from "./modalEditAnime";
 import axios from "axios";
 import useDebouncedState from "../../hooks/useDebouncedState.jsx";
 
-function ContentMods() {
+function AnimeLists() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [toast, setToast] = useState(null);
   const [anime, setAnime] = useState([]);
   const [searchQuery, searchInput, setSearchInput] = useDebouncedState(
     "",
@@ -25,11 +21,6 @@ function ContentMods() {
   const limit = 10;
 
   const [editAnime, setEditAnime] = useState(null);
-
-  const showToast = (message, type = "info") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 2500);
-  };
 
   const fetchAnime = async () => {
     try {
@@ -59,32 +50,12 @@ function ContentMods() {
     fetchAnime();
   }, [searchQuery, filterType, filterStatus, filterYear, sortOrder, page]);
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3001/api/anime/${id}/delete`);
-      showToast("Аниме удалено", "success");
-      fetchAnime();
-    } catch (err) {
-      showToast("Ошибка при удалении аниме", "error");
-    }
-  };
-
   if (loading) return <div>Загрузка аниме...</div>;
   if (error) return <div>Ошибка загрузки: {error.message}</div>;
 
   return (
     <div className="Content-mods-page">
-      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
-      {editAnime && (
-        <Modal
-          anime={editAnime}
-          onClose={() => setEditAnime(null)}
-          onSave={fetchAnime}
-        />
-      )}
       <div className="Content-mods-main">
-        <div className="Title-admin">Модерация контента</div>
-
         <div className="Content-filters-box">
           <input
             type="text"
@@ -164,24 +135,6 @@ function ContentMods() {
                     </div>
                   </div>
                 </div>
-
-                <div className="Content-mods-item-actions">
-                  <div className="Content-mods-action-button edit">
-                    <img
-                      src={Edit}
-                      alt="Редактировать"
-                      width={25}
-                      height={25}
-                      onClick={() => setEditAnime(item)}
-                    />
-                  </div>
-                  <div
-                    className="Content-mods-action-button delete"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    <img src={Delete} alt="Удалить" width={25} height={25} />
-                  </div>
-                </div>
               </div>
             ))
           ) : (
@@ -216,4 +169,4 @@ function ContentMods() {
   );
 }
 
-export default ContentMods;
+export default AnimeLists;
