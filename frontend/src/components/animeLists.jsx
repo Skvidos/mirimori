@@ -14,41 +14,37 @@ function AnimeLists() {
   );
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [filterYear, setFilterYear] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
-  const [editAnime, setEditAnime] = useState(null);
-
-  const fetchAnime = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("http://localhost:3001/api/anime", {
-        params: {
-          q: searchQuery,
-          type: filterType,
-          status: filterStatus,
-          year: filterYear,
-          sort: sortOrder,
-          page,
-          limit,
-        },
-      });
-
-      setAnime(res.data.data || []);
-      setTotalPages(res.data.totalPages || 1);
-      setLoading(false);
-    } catch (err) {
-      setError(err);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchAnime = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get("http://localhost:3001/api/anime", {
+          params: {
+            q: searchQuery,
+            type: filterType,
+            status: filterStatus,
+            sort: sortOrder,
+            page,
+            limit,
+          },
+        });
+
+        setAnime(res.data.data || []);
+        setTotalPages(res.data.totalPages || 1);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
     fetchAnime();
-  }, [searchQuery, filterType, filterStatus, filterYear, sortOrder, page]);
+  }, [searchQuery, filterType, filterStatus, sortOrder, page, limit]);
 
   if (loading) return <div>Загрузка аниме...</div>;
   if (error) return <div>Ошибка загрузки: {error.message}</div>;

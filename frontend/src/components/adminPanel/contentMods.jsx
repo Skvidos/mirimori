@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Poster from "../../assests/img/anime.png";
 import "../../styles/contentMods.css";
 import Edit from "../../assests/svg/wrench-solid-full.svg";
@@ -18,7 +18,6 @@ function ContentMods() {
   );
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [filterYear, setFilterYear] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -31,7 +30,7 @@ function ContentMods() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  const fetchAnime = async () => {
+  const fetchAnime = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:3001/api/anime", {
@@ -39,7 +38,6 @@ function ContentMods() {
           q: searchQuery,
           type: filterType,
           status: filterStatus,
-          year: filterYear,
           sort: sortOrder,
           page,
           limit,
@@ -48,16 +46,16 @@ function ContentMods() {
 
       setAnime(res.data.data || []);
       setTotalPages(res.data.totalPages || 1);
-      setLoading(false);
     } catch (err) {
       setError(err);
+    } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, filterType, filterStatus, sortOrder, page]);
 
   useEffect(() => {
     fetchAnime();
-  }, [searchQuery, filterType, filterStatus, filterYear, sortOrder, page]);
+  }, [fetchAnime]);
 
   const handleDelete = async (id) => {
     try {

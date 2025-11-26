@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Poster from "../assests/img/anime.png";
 import "../styles/contentMods.css";
 import axios from "axios";
@@ -14,15 +14,12 @@ function MangaLists() {
   );
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [filterYear, setFilterYear] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
-  const [editAnime, setEditAnime] = useState(null);
-
-  const fetchAnime = async () => {
+  const fetchAnime = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:3001/api/manga", {
@@ -30,7 +27,6 @@ function MangaLists() {
           q: searchQuery,
           type: filterType,
           status: filterStatus,
-          year: filterYear,
           sort: sortOrder,
           page,
           limit,
@@ -44,11 +40,11 @@ function MangaLists() {
       setError(err);
       setLoading(false);
     }
-  };
+  }, [searchQuery, filterType, filterStatus, sortOrder, page]);
 
   useEffect(() => {
     fetchAnime();
-  }, [searchQuery, filterType, filterStatus, filterYear, sortOrder, page]);
+  }, [fetchAnime]);
 
   if (loading) return <div>Загрузка манги...</div>;
   if (error) return <div>Ошибка загрузки: {error.message}</div>;
