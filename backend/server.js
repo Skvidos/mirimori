@@ -208,6 +208,78 @@ app.get("/api/anime", (req, res) => {
   });
 });
 
+app.get("/api/reviews", (req, res) => {
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 10;
+  let q = req.query.q || "";
+
+  const offset = (page - 1) * limit;
+
+  let baseWhere = "";
+  let paramsWhere = [];
+
+  if (q) {
+    baseWhere = `
+      WHERE 
+        reviews.content LIKE ? OR
+        users.username LIKE ? OR
+        anime.title LIKE ?
+    `;
+    paramsWhere.push(`%${q}%`, `%${q}%`, `%${q}%`);
+  }
+
+  const countSql = `
+    SELECT COUNT(*) AS total
+    FROM reviews
+    JOIN users ON reviews.user_id = users.id
+    LEFT JOIN anime ON reviews.item_id = anime.id 
+        AND reviews.item_type = 'anime'
+    ${baseWhere}
+  `;
+
+  db.query(countSql, paramsWhere, (err, countResult) => {
+    if (err) {
+      console.error("Ошибка COUNT:", err);
+      return res.status(500).json({ error: "Ошибка подсчёта" });
+    }
+
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / limit);
+
+    let selectSql = `
+      SELECT 
+        reviews.*,
+        users.username,
+        users.id AS user_id,
+        users.avatar_url,
+        anime.title AS anime_title,
+        anime.poster AS anime_poster
+      FROM reviews
+      JOIN users ON reviews.user_id = users.id
+      LEFT JOIN anime ON reviews.item_id = anime.id 
+          AND reviews.item_type = 'anime'
+      ${baseWhere}
+      ORDER BY reviews.created_at DESC
+      LIMIT ? OFFSET ?
+    `;
+
+    let paramsSelect = [...paramsWhere, limit, offset];
+
+    db.query(selectSql, paramsSelect, (err, results) => {
+      if (err) {
+        console.error("Ошибка SELECT:", err);
+        return res.status(500).json({ error: "Ошибка получения данных" });
+      }
+
+      res.json({
+        data: results,
+        total,
+        totalPages,
+      });
+    });
+  });
+});
+
 
 app.delete("/api/anime/:id/delete", (req, res) => {
   const animeId = req.params.id;
@@ -221,23 +293,6 @@ app.delete("/api/anime/:id/delete", (req, res) => {
   });
 });
 
-app.post("/watched", (req, res) => {
-  const { user_id, anime_id, status, episodes_watched } = req.body;
-
-  const sql = `
-    INSERT INTO watched (user_id, anime_id, status, episodes_watched)
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE status = VALUES(status), episodes_watched = VALUES(episodes_watched)
-  `;
-
-  db.query(sql, [user_id, anime_id, status, episodes_watched], (err, result) => {
-    if (err) {
-      console.error("Ошибка добавления/обновления:", err);
-      return res.status(500).json({ error: "Ошибка при добавлении/обновлении" });
-    }
-    res.json({ message: "Запись сохранена" });
-  });
-});
 
 app.get("/anime/new", (req, res) => {
   const sql = `

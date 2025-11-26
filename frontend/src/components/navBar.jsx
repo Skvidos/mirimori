@@ -4,7 +4,7 @@ function NavBar() {
   const navItems = [
     { label: "Аниме", link: "/anime" },
     { label: "Манга", link: "/manga" },
-    { label: "Рецензии", link: "#" },
+    { label: "Рецензии", link: "/reviews" },
     { label: "Пользователи", link: "#" },
     { label: "Новости", link: "#" },
     { label: "О сайте", link: "#" },
