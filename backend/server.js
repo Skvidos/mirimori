@@ -32,16 +32,235 @@ app.get("/search", (req, res) => {
   });
 });
 
-app.get("/api/users", (req, res) => {
-  const sql = "SELECT id, username AS name, avatar_url, email, CASE WHEN isAdmin = 1 THEN 'Admin' WHEN isMods = 1 THEN 'Moderator' ELSE 'User' END AS role FROM users";
-  db.query(sql, (err, results) => {
+app.post("/api/friends/toggle", (req, res) => {
+  const { user_id, friend_id } = req.body;
+
+  if (!user_id || !friend_id) {
+    return res.status(400).json({ error: "user_id и friend_id обязательны" });
+  }
+
+  const userId = Number(user_id);
+  const friendId = Number(friend_id);
+
+  const checkSql = `
+    SELECT * FROM friends
+    WHERE (user_id = ? AND friend_id = ?)
+       OR (user_id = ? AND friend_id = ?)
+    LIMIT 1
+  `;
+
+  db.query(checkSql, [userId, friendId, friendId, userId], (err, rows) => {
     if (err) {
-      console.error("Ошибка получения списка пользователей:", err);
-      return res.status(500).json({ error: "Ошибка при получении данных" });
+      console.error("DB check error:", err);
+      return res.status(500).json({ error: "Ошибка проверки" });
     }
-    res.json(results);
+
+    const relation = rows[0];
+
+    if (!relation) {
+      const insertSql = `
+        INSERT INTO friends (user_id, friend_id, status, created_at)
+        VALUES (?, ?, 'pending', NOW())
+      `;
+      return db.query(insertSql, [userId, friendId], (err2) => {
+        if (err2) {
+          console.error("DB insert error:", err2);
+          return res.status(500).json({ error: "Ошибка добавления" });
+        }
+        return res.json({ status: "pending", message: "Заявка отправлена" });
+      });
+    }
+
+    if (
+      relation.user_id === friendId &&
+      relation.friend_id === userId &&
+      relation.status === "pending"
+    ) {
+      const acceptSql = `
+        UPDATE friends
+        SET status = 'accepted'
+        WHERE id = ?
+      `;
+      return db.query(acceptSql, [relation.id], (err3) => {
+        if (err3) {
+          console.error("DB accept error:", err3);
+          return res.status(500).json({ error: "Ошибка подтверждения" });
+        }
+        return res.json({ status: "accepted", message: "Заявка подтверждена!" });
+      });
+    }
+
+    if (relation.status === "accepted") {
+      const deleteSql = `DELETE FROM friends WHERE id = ?`;
+      return db.query(deleteSql, [relation.id], (err4) => {
+        if (err4) {
+          console.error("DB delete error:", err4);
+          return res.status(500).json({ error: "Ошибка удаления" });
+        }
+        return res.json({ status: "removed", message: "Удалено из друзей" });
+      });
+    }
+
+    if (
+      relation.user_id === userId &&
+      relation.friend_id === friendId &&
+      relation.status === "pending"
+    ) {
+      const cancelSql = `DELETE FROM friends WHERE id = ?`;
+      return db.query(cancelSql, [relation.id], (err5) => {
+        if (err5) {
+          console.error("DB cancel error:", err5);
+          return res.status(500).json({ error: "Ошибка отмены заявки" });
+        }
+        return res.json({ status: "canceled", message: "Заявка отменена" });
+      });
+    }
   });
 });
+
+app.get("/api/users", (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const search = req.query.q ? `%${req.query.q}%` : "%";
+  const offset = (page - 1) * limit;
+
+  // Текущий пользователь (БЕЗ middleware)
+  const currentUserId = req.query.currentUserId
+    ? Number(req.query.currentUserId)
+    : null;
+
+  const sql = `
+    SELECT 
+      u.id,
+      u.username,
+      u.avatar_url,
+      u.email,
+      CASE 
+        WHEN u.isAdmin = 1 THEN 'Admin'
+        WHEN u.isMods = 1 THEN 'Moderator'
+        ELSE 'User'
+      END AS role,
+
+      (
+        SELECT f.status
+        FROM friends f
+        WHERE 
+          (
+            f.user_id = u.id AND f.friend_id = ?
+          ) OR (
+            f.user_id = ? AND f.friend_id = u.id
+          )
+        LIMIT 1
+      ) AS friend_status
+
+    FROM users u
+    WHERE u.username LIKE ? OR u.email LIKE ?
+    ORDER BY u.id DESC
+    LIMIT ? OFFSET ?
+  `;
+
+  const countSql = `
+    SELECT COUNT(*) AS total
+    FROM users
+    WHERE username LIKE ? OR email LIKE ?
+  `;
+
+  db.query(countSql, [search, search], (err, countResult) => {
+    if (err) {
+      console.error("Ошибка получения количества пользователей:", err);
+      return res.status(500).json({ error: "Ошибка сервера" });
+    }
+
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / limit);
+
+    db.query(
+      sql,
+      [
+        currentUserId, // для friend_id = ?
+        currentUserId, // для user_id = ?
+        search,
+        search,
+        limit,
+        offset,
+      ],
+      (err, results) => {
+        if (err) {
+          console.error("Ошибка получения списка пользователей:", err);
+          return res.status(500).json({ error: "Ошибка при получении данных" });
+        }
+
+        res.json({
+          data: results,
+          page,
+          totalPages,
+          total,
+        });
+      }
+    );
+  });
+});
+
+
+// app.get("/api/users", (req, res) => {
+//   const page = parseInt(req.query.page) || 1;
+//   const limit = parseInt(req.query.limit) || 20;
+//   const search = req.query.q ? `%${req.query.q}%` : "%";
+//   const offset = (page - 1) * limit;
+
+//   const sql = `
+//     SELECT 
+//       id,
+//       username,
+//       avatar_url,
+//       email,
+//       CASE 
+//         WHEN isAdmin = 1 THEN 'Admin'
+//         WHEN isMods = 1 THEN 'Moderator'
+//         ELSE 'User'
+//       END AS role,
+//       (
+//         SELECT 
+//           status 
+//         FROM friends 
+//       )
+//     FROM users
+//     WHERE username LIKE ? OR email LIKE ?
+//     ORDER BY id DESC
+//     LIMIT ? OFFSET ?
+//   `;
+
+//   const countSql = `
+//     SELECT COUNT(*) AS total
+//     FROM users
+//     WHERE username LIKE ? OR email LIKE ?
+//   `;
+
+//   db.query(countSql, [search, search], (err, countResult) => {
+//     if (err) {
+//       console.error("Ошибка получения количества пользователей:", err);
+//       return res.status(500).json({ error: "Ошибка сервера" });
+//     }
+
+//     const total = countResult[0].total;
+//     const totalPages = Math.ceil(total / limit);
+
+//     db.query(sql, [search, search, limit, offset], (err, results) => {
+//       if (err) {
+//         console.error("Ошибка получения списка пользователей:", err);
+//         return res.status(500).json({ error: "Ошибка при получении данных" });
+//       }
+
+//       res.json({
+//         data: results,
+//         page,
+//         totalPages,
+//         total,
+//       });
+//     });
+//   });
+// });
+
 
 app.get("/api/users/:id", (req, res) => {
   const userId = req.params.id;

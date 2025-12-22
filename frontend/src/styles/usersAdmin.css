@@ -80,6 +80,17 @@
   background-color: #acacac;
 }
 
+.UserAdmin-users-addFriend {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.UserAdmin-users-addFriend:hover {
+  background-color: #acacac;
+}
+
 .UserAdmin-users-make-mod.add:hover,
 .UserAdmin-users-make-admin.add:hover {
   background-color: green;

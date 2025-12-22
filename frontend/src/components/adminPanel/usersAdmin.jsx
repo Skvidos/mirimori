@@ -13,6 +13,8 @@ function UsersAdmin() {
   const [actionState, setActionState] = useState({});
   const [toast, setToast] = useState(null);
 
+  // const [user, setUser] = useState();
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -20,7 +22,7 @@ function UsersAdmin() {
   const fetchUsers = async () => {
     try {
       const res = await axios.get("http://localhost:3001/api/users");
-      setUsers(res.data);
+      setUsers(res.data.data);
       setLoading(false);
     } catch (err) {
       setError(err);

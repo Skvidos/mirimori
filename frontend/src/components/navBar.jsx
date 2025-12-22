@@ -5,7 +5,7 @@ function NavBar() {
     { label: "Аниме", link: "/anime" },
     { label: "Манга", link: "/manga" },
     { label: "Рецензии", link: "/reviews" },
-    { label: "Пользователи", link: "#" },
+    { label: "Пользователи", link: "/users" },
     { label: "Новости", link: "#" },
     { label: "О сайте", link: "#" },
   ];

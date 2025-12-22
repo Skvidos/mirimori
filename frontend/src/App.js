@@ -11,6 +11,7 @@ import UserPage from './pages/userPage';
 import AnimeList from './pages/animeList';
 import MangaList from './pages/mangaList';
 import ReviewList from './pages/reviewList';
+import UsersList from './pages/usersList';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -41,6 +42,7 @@ function App() {
         <Route path="/anime" element={<AnimeList />} />
         <Route path="/manga" element={<MangaList />} />
         <Route path="/reviews" element={<ReviewList />} />
+        <Route path="/users" element={<UsersList />} />
         <Route path="/anime/:id" element={<AnimePage />} />
         <Route path="/user/:id" element={<UserPage />} />
         <Route path="/adminPanel" element={
