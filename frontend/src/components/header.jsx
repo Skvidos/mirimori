@@ -40,7 +40,14 @@ function Header() {
           <SearchBar onSearch={search} />
 
           <div className="Header-right">
-            <img src={UsersLogo} alt="Users Logo" className="Users-logo" />
+            {userLoggedIn && (
+              <img
+                src={UsersLogo}
+                alt="Users Logo"
+                className="Users-logo"
+                onClick={() => navigate("/friends")}
+              />
+            )}
 
             {userLoggedIn ? (
               <div className="User-block" style={{ position: "relative" }}>

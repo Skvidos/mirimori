@@ -15,6 +15,7 @@ import UsersList from './pages/usersList';
 import News from './pages/news';
 import About from './pages/about';
 import PageTitle from './hooks/pageTitle';
+import Friends from './pages/friends';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -84,6 +85,11 @@ function App() {
         <Route path="/about" element={
           <PageTitle title="О сайте">
             <About />
+          </PageTitle>
+        } />
+        <Route path='/friends' element={
+          <PageTitle title="Друзья">
+            <Friends />
           </PageTitle>
         } />
         <Route path="/adminPanel" element={

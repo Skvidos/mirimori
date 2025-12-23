@@ -1,0 +1,64 @@
+.Friends-page {
+  min-height: 100vh;
+}
+
+.Friends-page-main {
+  min-height: calc(100vh - 120px - 200px);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.Friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.Friend-card {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  background-color: #f9f9f9;
+  font-family: "Bellota Text";
+  display: flex;
+}
+
+.Friend-avatar {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.Friend-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.Friend-name {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 20px;
+  color: #000;
+}
+
+.Friend-btn {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.Friend-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.Friends-page-main p {
+  font-family: "Bellota Text";
+  font-weight: 700;
+  font-size: 18px;
+  color: #000;
+}

@@ -664,20 +664,6 @@ app.get("/api/anime/:animeId/average-rating", (req, res) => {
   });
 });
 
-// app.get("/api/news", (req, res) => {
-//   const q = req.query.q || "";
-//   let sql = "SELECT * FROM news";
-//   const params = [];
-//   if (q) {
-//     sql += " WHERE title LIKE ?";
-//     params.push(`%${q}%`);
-//   }
-//   sql += " ORDER BY created_at DESC";
-//   db.query(sql, params, (err, results) => {
-//     if (err) return res.status(500).json({ error: "Ошибка" });
-//     res.json(results);
-//   });
-// });
 
 app.get("/api/news", (req, res) => {
   let page = parseInt(req.query.page) || 1;
@@ -1189,7 +1175,46 @@ app.post("/api/users/:userId/anime-status/:animeId/episodes", (req, res) => {
 });
 
 
+app.get("/api/users/:userId/friends", (req, res) => {
+  const { userId } = req.params;
 
+  const sql = `
+    SELECT 
+      u.id,
+      u.username,
+      u.avatar_url
+    FROM friends f
+    JOIN users u 
+      ON (
+        (f.user_id = ? AND u.id = f.friend_id)
+        OR
+        (f.friend_id = ? AND u.id = f.user_id)
+      )
+  `;
+
+  db.query(sql, [userId, userId], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при получении друзей" });
+    }
+    res.json(results);
+  });
+});
+
+
+app.delete("/api/users/:userId/friends/:friendId", (req, res) => {
+  const { userId, friendId } = req.params;
+
+  const sql = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+
+  db.query(sql, [userId, friendId], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка при удалении друга" });
+    }
+    res.json({ success: true });
+  });
+});
 
 app.listen(3001, () => {
   console.log("Бэкенд сервер запущен на http://localhost:3001");
