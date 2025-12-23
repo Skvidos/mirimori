@@ -26,7 +26,7 @@ function AddNews() {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:3001/api/news");
-      setNews(res.data || []);
+      setNews(res.data.data || []);
       setLoading(false);
       setTotalPages(res.data.totalPages || 1);
     } catch (err) {

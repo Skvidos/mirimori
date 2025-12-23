@@ -56,6 +56,14 @@ function AnimePage() {
     }
   }, [user, id]);
 
+  useEffect(() => {
+    if (anime?.title) {
+      document.title = `${anime.title} — Mirimori`;
+    } else {
+      document.title = "Аниме — Mirimori";
+    }
+  }, [anime]);
+
   const toggleFavorite = async () => {
     if (!user) {
       showToast("Пожалуйста, войдите в систему", "danger");

@@ -13,6 +13,7 @@ import MangaList from './pages/mangaList';
 import ReviewList from './pages/reviewList';
 import UsersList from './pages/usersList';
 import News from './pages/news';
+import PageTitle from './hooks/pageTitle';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -37,16 +38,48 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/anime" element={<AnimeList />} />
-        <Route path="/manga" element={<MangaList />} />
-        <Route path="/reviews" element={<ReviewList />} />
-        <Route path="/users" element={<UsersList />} />
+        <Route path="/" element={
+          <PageTitle title="Главная">
+            <Main />
+          </PageTitle>
+        } />
+        <Route path="/register" element={
+          <PageTitle title="Регистрация">
+            <Register />
+          </PageTitle>
+        } />
+        <Route path="/login" element={
+          <PageTitle title="Вход">
+            <Login setUser={setUser} />
+          </PageTitle>
+        } />
+        <Route path="/anime" element={
+          <PageTitle title="Аниме">
+            <AnimeList />
+          </PageTitle>
+        } />
+        <Route path="/manga" element={
+          <PageTitle title="Манга">
+            <MangaList />
+          </PageTitle>
+        } />
+        <Route path="/reviews" element={
+          <PageTitle title="Отзывы">
+            <ReviewList />
+          </PageTitle>
+        } />
+        <Route path="/users" element={
+          <PageTitle title="Пользователи">
+            <UsersList />
+          </PageTitle>
+        } />
         <Route path="/anime/:id" element={<AnimePage />} />
         <Route path="/user/:id" element={<UserPage />} />
-        <Route path="/news" element={<News />} />
+        <Route path="/news" element={
+          <PageTitle title="Новости">
+            <News />
+          </PageTitle>
+        } />
         <Route path="/adminPanel" element={
           <ProtectedRoute user={user}><AdminPanel /></ProtectedRoute>
         } />

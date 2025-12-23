@@ -26,8 +26,8 @@ function NewsLists() {
             limit,
           },
         });
-        setNews(res.data.data || []); // <-- здесь
-        setTotalPages(res.data.totalPages || 1); // <-- и здесь
+        setNews(res.data.data || []);
+        setTotalPages(res.data.totalPages || 1);
         setLoading(false);
       } catch (err) {
         setError(err.message);

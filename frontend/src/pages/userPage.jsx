@@ -60,6 +60,14 @@ function UserPage() {
       .catch((err) => console.error(err));
   }, [id]);
 
+  useEffect(() => {
+    if (user?.username) {
+      document.title = `${user.username} — Mirimori`;
+    } else {
+      document.title = "Пользователь — Mirimori";
+    }
+  }, [user]);
+
   const formatAge = (age) => {
     if (age === null || age === undefined) return "";
     const n = Math.abs(Number(age));
