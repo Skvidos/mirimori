@@ -60,7 +60,7 @@ router.post("/verify", (req, res) => {
     const userId = decoded.id;
 
     connection.query(
-      "SELECT id, username, email, avatar_url, isMods, isAdmin FROM users WHERE id = ?",
+      "SELECT id, username, email, avatar_url, age, sex, isMods, isAdmin FROM users WHERE id = ?",
       [userId],
       (err, results) => {
         if (err) return res.status(500).json({ error: err });

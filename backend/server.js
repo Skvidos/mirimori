@@ -124,7 +124,6 @@ app.get("/api/users", (req, res) => {
   const search = req.query.q ? `%${req.query.q}%` : "%";
   const offset = (page - 1) * limit;
 
-  // Текущий пользователь (БЕЗ middleware)
   const currentUserId = req.query.currentUserId
     ? Number(req.query.currentUserId)
     : null;
@@ -135,6 +134,8 @@ app.get("/api/users", (req, res) => {
       u.username,
       u.avatar_url,
       u.email,
+      u.age,
+      u.sex
       CASE 
         WHEN u.isAdmin = 1 THEN 'Admin'
         WHEN u.isMods = 1 THEN 'Moderator'
@@ -1215,6 +1216,168 @@ app.delete("/api/users/:userId/friends/:friendId", (req, res) => {
     res.json({ success: true });
   });
 });
+
+app.put("/api/users/:id/username", (req, res) => {
+  const { id } = req.params;
+  const { username } = req.body;
+
+  if (!username || username.length < 3) {
+    return res.status(400).json({ error: "Некорректный username" });
+  }
+
+  const sql = `
+    UPDATE users 
+    SET username = ? 
+    WHERE id = ?
+  `;
+
+  db.query(sql, [username, id], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка обновления username" });
+    }
+    res.json({ success: true });
+  });
+});
+
+app.put("/api/users/:id/age", (req, res) => {
+  const { id } = req.params;
+  const { age } = req.body;
+
+  const sql = `
+    UPDATE users 
+    SET age = ? 
+    WHERE id = ?
+  `;
+
+  db.query(sql, [age, id], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Ошибка обновления возраста" });
+    }
+    res.json({ success: true });
+  });
+});
+
+app.put("/api/users/:id/gender", (req, res) => {
+  const { id } = req.params;
+  const { gender } = req.body;
+
+  if (!gender || !['male', 'female'].includes(gender)) {
+    return res.status(400).json({ error: "Неверное значение пола (male или female)" });
+  }
+
+  const sql = `
+    UPDATE users 
+    SET sex = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [gender, parseInt(id)], (err, result) => {
+    if (err) {
+      console.error('SQL Error:', err.code, err.message);
+      return res.status(500).json({ error: "Ошибка обновления пола", details: err.message });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Пользователь не найден" });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+const storage = multer.diskStorage({
+  destination: "uploads/avatars",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+app.use("/uploads", express.static("uploads"));
+
+app.post(
+  "/api/users/:id/avatar",
+  upload.single("avatar"),
+  (req, res) => {
+    const { id } = req.params;
+    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+
+    const sql = `
+      UPDATE users 
+      SET avatar_url = ? 
+      WHERE id = ?
+    `;
+
+    db.query(sql, [avatarUrl, id], (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Ошибка загрузки аватара" });
+      }
+      res.json({ avatar_url: avatarUrl });
+    });
+  }
+);
+
+app.get("/api/users/:id/anime/export", (req, res) => {
+  const userId = req.user?.id || req.params.id;
+  const { id } = req.params;
+
+  if (req.user && req.user.id !== parseInt(id)) {
+    return res.status(403).json({ error: "Доступ запрещён" });
+  }
+
+  if (!userId || isNaN(userId)) {
+    return res.status(400).json({ error: "Неверный ID пользователя" });
+  }
+
+  const sql = `
+    SELECT 
+      ul.id, ul.item_id, ul.status, ul.progress, ul.added_at,
+      a.title, a.title_jp, a.title_en, a.poster, a.episodes_total, a.episode_duration, a.release_date, a.rating, a.status
+    FROM user_lists ul
+    INNER JOIN anime a ON ul.item_id = a.id 
+    WHERE ul.user_id = ? 
+      AND ul.item_type = 'anime'
+      AND (ul.status = 'completed' OR (ul.status = 'watching' AND ul.progress >= 50))  -- Фильтр "просмотренных"
+    ORDER BY ul.added_at DESC
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error('Export error:', err);
+      return res.status(500).json({ error: "Ошибка экспорта данных" });
+    }
+
+    const exportData = results.map(row => ({
+      anime: {
+        id: row.item_id,
+        title: row.title,
+        title_jp: row.title_jp || null,
+        title_en: row.title_en || null,
+        episodes_total: row.episodes_total || null,
+        episode_duration: row.episode_duration || null,
+        release_date: row.release_date || null,
+        rating: row.rating || null,
+        status: row.status || null,
+        poster: row.poster || null,
+      },
+      status: row.status,
+      progress: row.progress,
+      added_at: row.added_at,
+      list_id: row.id
+    }));
+
+    res.json({
+      user_id: userId,
+      export_date: new Date().toISOString(),
+      anime_list: exportData
+    });
+  });
+});
+
+
 
 app.listen(3001, () => {
   console.log("Бэкенд сервер запущен на http://localhost:3001");

@@ -13,8 +13,6 @@ function UsersAdmin() {
   const [actionState, setActionState] = useState({});
   const [toast, setToast] = useState(null);
 
-  // const [user, setUser] = useState();
-
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -152,7 +150,6 @@ function UsersAdmin() {
                         : user.isAdmin && user.isMods
                         ? "Администратор и модератор"
                         : "Пользователь"}
-                      {console.log(user.role)}
                     </div>
                   </div>
                 </div>

@@ -10,7 +10,13 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
+
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const { setUser, setUserLoggedIn } = useContext(UserContext);
 
@@ -31,9 +37,11 @@ function Login() {
         setUserLoggedIn(true);
 
         setMessage("Вход успешен!");
+        showToast("Вход успешен!", "success");
         setTimeout(() => navigate("/"), 1000);
       } else {
         setMessage(data.error || data.message || "Ошибка входа");
+        showToast(data.error || data.message || "Ошибка входа", "danger");
       }
     } catch (err) {
       console.error(err);
@@ -61,6 +69,7 @@ function Login() {
 
   return (
     <div className="Login-page">
+      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
       <div className="Login-page-header">
         <Header />
         <NavBar />
