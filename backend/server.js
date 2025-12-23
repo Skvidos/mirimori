@@ -11,6 +11,8 @@ app.use(express.json());
 
 app.use("/api", authRoutes);
 
+
+// Поисковый маршрут
 app.get("/search", (req, res) => {
   const search = req.query.query;
   if (!search) {
@@ -32,6 +34,7 @@ app.get("/search", (req, res) => {
   });
 });
 
+// Маршруты для управления друзьями
 app.post("/api/friends/toggle", (req, res) => {
   const { user_id, friend_id } = req.body;
 
@@ -118,6 +121,7 @@ app.post("/api/friends/toggle", (req, res) => {
   });
 });
 
+// Маршруты для управления пользователями
 app.get("/api/users", (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
@@ -202,6 +206,7 @@ app.get("/api/users", (req, res) => {
   });
 });
 
+// Маршруты для управления пользователями
 app.get("/api/users/:id", (req, res) => {
   const userId = req.params.id;
   const sql = "SELECT * FROM users WHERE id = ?";
@@ -214,6 +219,7 @@ app.get("/api/users/:id", (req, res) => {
   });
 });
 
+// Маршруты для управления правами пользователей
 app.put("/api/users/:id/addMods", (req, res) => {
   const userId = req.params.id;
   const { isMods } = req.body;
@@ -227,6 +233,7 @@ app.put("/api/users/:id/addMods", (req, res) => {
   });
 });
 
+// Маршруты для управления правами пользователей
 app.put("/api/users/:id/addAdmin", (req, res) => {
   const userId = req.params.id;
   const { isAdmin } = req.body;
@@ -240,6 +247,7 @@ app.put("/api/users/:id/addAdmin", (req, res) => {
   });
 });
 
+// Маршруты для управления пользователями
 app.delete("/api/users/:id/delete", async (req, res) => {
   const userId = req.params.id;
   const sql = "DELETE FROM users WHERE id = ?";
@@ -252,6 +260,7 @@ app.delete("/api/users/:id/delete", async (req, res) => {
   });
 });
 
+// Маршруты для получения списка аниме и манги
 app.get("/api/manga", (req, res) => {
   const {
     q = "",
@@ -294,6 +303,7 @@ app.get("/api/manga", (req, res) => {
   });
 });
 
+// Маршруты для получения списка аниме и манги
 app.get("/api/anime", (req, res) => {
   const {
     q = "",
@@ -367,6 +377,7 @@ app.get("/api/anime", (req, res) => {
   });
 });
 
+// Маршруты для получения списка отзывов
 app.get("/api/reviews", (req, res) => {
   let page = parseInt(req.query.page) || 1;
   let limit = parseInt(req.query.limit) || 10;
@@ -439,7 +450,7 @@ app.get("/api/reviews", (req, res) => {
   });
 });
 
-
+// Маршруты для управления аниме
 app.delete("/api/anime/:id/delete", (req, res) => {
   const animeId = req.params.id;
   const sql = "DELETE FROM anime WHERE id = ?";
@@ -452,7 +463,7 @@ app.delete("/api/anime/:id/delete", (req, res) => {
   });
 });
 
-
+// Маршруты для получения новинок
 app.get("/anime/new", (req, res) => {
   const sql = `
     SELECT id, title, type, poster 
@@ -469,6 +480,7 @@ app.get("/anime/new", (req, res) => {
   });
 });
 
+// Маршруты для получения последних просмотренных аниме
 app.get("/anime/last-watched", (req, res) => {
   const sql = `
     SELECT w.id, a.title, a.type, a.poster, w.watched_at
@@ -486,6 +498,7 @@ app.get("/anime/last-watched", (req, res) => {
   });
 });
 
+// Маршруты для получения информации об аниме по ID
 app.get("/anime/:id", (req, res) => {
   const animeId = req.params.id;
   const sql = "SELECT * FROM anime WHERE id = ?";
@@ -499,7 +512,7 @@ app.get("/anime/:id", (req, res) => {
 app.use("/uploads/posters", express.static(path.join(__dirname, "uploads/posters")));
 app.use("/uploads/images", express.static(path.join(__dirname, "uploads/images")));
 
-
+// Настройка multer для загрузки файлов
 const storagePosters = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/posters");
@@ -511,6 +524,7 @@ const storagePosters = multer.diskStorage({
 });
 const uploadPoster = multer({ storage: storagePosters });
 
+// Настройка multer для загрузки изображений
 const storageImages = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/images");
@@ -523,7 +537,7 @@ const storageImages = multer.diskStorage({
 const uploadImage = multer({ storage: storageImages });
 
 
-
+// Маршруты для добавления аниме
 app.post("/anime/upload", uploadPoster.single("poster"), (req, res) => {
   const { title, title_jp, title_en, alt_titles, description, type, episodes_total, episodes_duration, release_date, studio, source } = req.body;
   const poster_url = `/uploads/posters/${req.file.filename}`;
@@ -542,6 +556,7 @@ app.post("/anime/upload", uploadPoster.single("poster"), (req, res) => {
   });
 });
 
+// Маршруты для редактирования аниме
 app.put("/api/anime/:id/edit", uploadPoster.single("poster"), (req, res) => {
   const animeId = req.params.id;
 
@@ -610,7 +625,7 @@ app.put("/api/anime/:id/edit", uploadPoster.single("poster"), (req, res) => {
 });
 
 
-
+// Маршруты для управления рейтингами
 app.post("/api/ratings", (req, res) => {
   const { userId, animeId, rating } = req.body;
   if (!userId || !animeId || !rating) {
@@ -632,6 +647,7 @@ app.post("/api/ratings", (req, res) => {
   });
 });
 
+// Маршруты для получения рейтинга пользователя для аниме
 app.get("/api/ratings/:userId/:animeId", (req, res) => {
   const { userId, animeId } = req.params;
   const sql = "SELECT rating FROM ratings WHERE user_id = ? AND anime_id = ?";
@@ -649,6 +665,7 @@ app.get("/api/ratings/:userId/:animeId", (req, res) => {
   });
 });
 
+// Маршруты для получения среднего рейтинга аниме
 app.get("/api/anime/:animeId/average-rating", (req, res) => {
   const { animeId } = req.params;
   const sql = "SELECT AVG(rating) AS avg_rating, COUNT(*) AS total FROM ratings WHERE anime_id = ?";
@@ -666,6 +683,7 @@ app.get("/api/anime/:animeId/average-rating", (req, res) => {
 });
 
 
+// Маршруты для получения новостей
 app.get("/api/news", (req, res) => {
   let page = parseInt(req.query.page) || 1;
   let limit = parseInt(req.query.limit) || 10;
@@ -727,7 +745,7 @@ app.get("/api/news", (req, res) => {
 });
 
 
-
+// Маршруты для добавления новости
 app.post("/api/news/add", uploadImage.single("image"), (req, res) => {
   const { title, content } = req.body;
   const image = req.file ? `/uploads/images/${req.file.filename}` : null;
@@ -746,6 +764,7 @@ app.post("/api/news/add", uploadImage.single("image"), (req, res) => {
   });
 });
 
+// Маршруты для удаления новости
 app.delete("/api/news/:id", (req, res) => {
   const newsId = req.params.id;
   const sql = "DELETE FROM news WHERE id = ?";
@@ -758,7 +777,7 @@ app.delete("/api/news/:id", (req, res) => {
   });
 });
 
-
+// Маршруты для получения статистики пользователя
 app.get("/api/stats/anime/:userId", (req, res) => {
   const userId = req.params.userId;
 
@@ -782,6 +801,7 @@ app.get("/api/stats/anime/:userId", (req, res) => {
   });
 });
 
+// Маршруты для получения статистики пользователя
 app.get("/api/stats/manga/:userId", (req, res) => {
   const userId = req.params.userId;
 
@@ -805,6 +825,7 @@ app.get("/api/stats/manga/:userId", (req, res) => {
   });
 });
 
+// Маршруты для получения общего времени просмотра аниме пользователем
 app.get("/api/stats/time/:userId", (req, res) => {
   const userId = req.params.userId;
 
@@ -826,6 +847,7 @@ app.get("/api/stats/time/:userId", (req, res) => {
   });
 });
 
+// Маршруты для получения списка аниме пользователя
 app.get("/api/users/:id/anime", (req, res) => {
   const userId = req.params.id;
   const sql = `
@@ -846,6 +868,7 @@ app.get("/api/users/:id/anime", (req, res) => {
   });
 });
 
+// Маршруты для получения списка манги пользователя
 app.get("/api/users/:id/favorites/anime", (req, res) => {
   const userId = req.params.id;
 
@@ -866,6 +889,7 @@ app.get("/api/users/:id/favorites/anime", (req, res) => {
   });
 });
 
+// Маршруты для получения списка избранного пользователя
 app.get("/api/users/:id/favorites/manga", (req, res) => {
   const userId = req.params.id;
 
@@ -886,6 +910,7 @@ app.get("/api/users/:id/favorites/manga", (req, res) => {
   });
 });
 
+// Маршруты для получения статистики избранного пользователя
 app.get("/api/users/:id/favorites/anime/stats", (req, res) => {
   const userId = req.params.id;
 
@@ -905,6 +930,7 @@ app.get("/api/users/:id/favorites/anime/stats", (req, res) => {
   });
 });
 
+// Маршруты для получения статистики избранного пользователя
 app.get("/api/users/:id/favorites/manga/stats", (req, res) => {
   const userId = req.params.id;
 
@@ -924,6 +950,7 @@ app.get("/api/users/:id/favorites/manga/stats", (req, res) => {
   });
 });
 
+// Маршруты для получения списка отзывов пользователя
 app.get("/api/users/:id/reviews", (req, res) => {
   const userId = req.params.id;
 
@@ -974,6 +1001,7 @@ app.get("/api/users/:id/reviews", (req, res) => {
   });
 });
 
+// Маршруты для получения списка отзывов об аниме
 app.get("/api/anime/:id/reviews", (req, res) => {
   const animeId = req.params.id;
 
@@ -1012,6 +1040,7 @@ app.get("/api/anime/:id/reviews", (req, res) => {
   });
 });
 
+// Маршруты для добавления отзыва об аниме
 app.post("/api/users/:userId/reviews/anime/:animeId/add", (req, res) => {
   const { userId } = req.params;
   const { animeId } = req.params;
@@ -1035,6 +1064,7 @@ app.post("/api/users/:userId/reviews/anime/:animeId/add", (req, res) => {
   });
 });
 
+// Маршруты для удаления отзыва
 app.delete("/api/reviews/:postId/delete", (req, res) => {
   const { user_id } = req.body;
   const { postId } = req.params;
@@ -1056,7 +1086,7 @@ app.delete("/api/reviews/:postId/delete", (req, res) => {
   });
 });
 
-
+// Маршруты для добавления в избранное
 app.post("/api/users/:userId/favorites/add", (req, res) => {
   const { userId } = req.params;
   const { item_id, item_type } = req.body;
@@ -1080,6 +1110,7 @@ app.post("/api/users/:userId/favorites/add", (req, res) => {
   });
 });
 
+// Маршруты для удаления из избранного
 app.delete("/api/users/:userId/favorites/delete", (req, res) => {
   const { userId } = req.params;
   const { item_id, item_type } = req.body;
@@ -1099,6 +1130,7 @@ app.delete("/api/users/:userId/favorites/delete", (req, res) => {
   });
 });
 
+// Маршруты для управления статусом аниме пользователя
 app.get("/api/users/:userId/anime-status/:animeId", (req, res) => {
   const { userId, animeId } = req.params;
 
@@ -1119,6 +1151,7 @@ app.get("/api/users/:userId/anime-status/:animeId", (req, res) => {
   });
 });
 
+// Маршруты для получения всех статусов аниме пользователя
 app.get("/api/users/:userId/anime-status", (req, res) => {
   const { userId } = req.params;
 
@@ -1135,6 +1168,7 @@ app.get("/api/users/:userId/anime-status", (req, res) => {
   });
 });
 
+// Маршруты для установки/обновления статуса аниме пользователя
 app.post("/api/users/:userId/anime-status/:animeId", (req, res) => {
   const { userId, animeId } = req.params;
   const { status, progress } = req.body;
@@ -1159,6 +1193,7 @@ app.post("/api/users/:userId/anime-status/:animeId", (req, res) => {
   });
 });
 
+// Маршруты для обновления прогресса эпизодов аниме пользователя
 app.post("/api/users/:userId/anime-status/:animeId/episodes", (req, res) => {
   const { userId, animeId } = req.params;
   const { progress } = req.body;
@@ -1175,7 +1210,7 @@ app.post("/api/users/:userId/anime-status/:animeId/episodes", (req, res) => {
   });
 });
 
-
+// Маршруты для получения списка друзей пользователя
 app.get("/api/users/:userId/friends", (req, res) => {
   const { userId } = req.params;
 
@@ -1202,7 +1237,7 @@ app.get("/api/users/:userId/friends", (req, res) => {
   });
 });
 
-
+// Маршруты для добавления друга
 app.delete("/api/users/:userId/friends/:friendId", (req, res) => {
   const { userId, friendId } = req.params;
 
@@ -1217,6 +1252,7 @@ app.delete("/api/users/:userId/friends/:friendId", (req, res) => {
   });
 });
 
+// Маршруты для удаления друга
 app.put("/api/users/:id/username", (req, res) => {
   const { id } = req.params;
   const { username } = req.body;
@@ -1240,6 +1276,7 @@ app.put("/api/users/:id/username", (req, res) => {
   });
 });
 
+// Маршруты для обновления возраста пользователя
 app.put("/api/users/:id/age", (req, res) => {
   const { id } = req.params;
   const { age } = req.body;
@@ -1259,6 +1296,7 @@ app.put("/api/users/:id/age", (req, res) => {
   });
 });
 
+// Маршруты для обновления пола пользователя
 app.put("/api/users/:id/gender", (req, res) => {
   const { id } = req.params;
   const { gender } = req.body;
@@ -1286,6 +1324,7 @@ app.put("/api/users/:id/gender", (req, res) => {
   });
 });
 
+// Маршруты для загрузки аватара пользователя
 const storage = multer.diskStorage({
   destination: "uploads/avatars",
   filename: (req, file, cb) => {
@@ -1320,6 +1359,7 @@ app.post(
   }
 );
 
+// Маршруты для экспорта списка аниме пользователя
 app.get("/api/users/:id/anime/export", (req, res) => {
   const userId = req.user?.id || req.params.id;
   const { id } = req.params;
@@ -1376,8 +1416,7 @@ app.get("/api/users/:id/anime/export", (req, res) => {
   });
 });
 
-
-
+// Запуск сервера
 app.listen(3001, () => {
   console.log("Бэкенд сервер запущен на http://localhost:3001");
 });
