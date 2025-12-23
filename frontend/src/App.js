@@ -93,7 +93,10 @@ function App() {
           </PageTitle>
         } />
         <Route path="/adminPanel" element={
-          <ProtectedRoute user={user}><AdminPanel /></ProtectedRoute>
+          <ProtectedRoute user={user}>
+            <PageTitle title="Панель администратора">
+              <AdminPanel /></PageTitle>
+          </ProtectedRoute>
         } />
       </Routes>
     </Router>

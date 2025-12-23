@@ -18,7 +18,7 @@ function ReviewLists() {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
-  const { user: UserId } = useContext(UserContext);
+  const { user: UserId, userLoggedIn } = useContext(UserContext);
 
   const [toast, setToast] = useState(null);
 
@@ -85,6 +85,7 @@ function ReviewLists() {
       );
     } catch (err) {
       console.error("Ошибка при изменении друга:", err);
+      showToast("Ошибка при изменении друга", "danger");
     }
   };
 
@@ -139,27 +140,29 @@ function ReviewLists() {
                 <div className="UsersAdmin-user-email">{user.email}</div>
 
                 <div className="UserAdmin-user-buttons">
-                  <div
-                    className={`UserAdmin-users-addFriend ${
-                      actionState[`friend-${user.id}`] === "add"
-                        ? "button-success"
-                        : actionState[`friend-${user.id}`] === "remove"
-                        ? "button-danger"
-                        : ""
-                    }`}
-                    onClick={() => toggleFriend(user)}
-                  >
-                    <img
-                      src={AddUser}
-                      alt={
-                        user.isFriend
-                          ? "Удалить из друзей"
-                          : "Добавить в друзья"
-                      }
-                      width={25}
-                      height={25}
-                    />
-                  </div>
+                  {userLoggedIn && UserId.id !== user.id && (
+                    <div
+                      className={`UserAdmin-users-addFriend ${
+                        actionState[`friend-${user.id}`] === "add"
+                          ? "button-success"
+                          : actionState[`friend-${user.id}`] === "remove"
+                          ? "button-danger"
+                          : ""
+                      }`}
+                      onClick={() => toggleFriend(user)}
+                    >
+                      <img
+                        src={AddUser}
+                        alt={
+                          user.isFriend
+                            ? "Удалить из друзей"
+                            : "Добавить в друзья"
+                        }
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ))
