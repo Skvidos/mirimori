@@ -13,6 +13,7 @@ import MangaList from './pages/mangaList';
 import ReviewList from './pages/reviewList';
 import UsersList from './pages/usersList';
 import News from './pages/news';
+import About from './pages/about';
 import PageTitle from './hooks/pageTitle';
 
 function App() {
@@ -78,6 +79,11 @@ function App() {
         <Route path="/news" element={
           <PageTitle title="Новости">
             <News />
+          </PageTitle>
+        } />
+        <Route path="/about" element={
+          <PageTitle title="О сайте">
+            <About />
           </PageTitle>
         } />
         <Route path="/adminPanel" element={

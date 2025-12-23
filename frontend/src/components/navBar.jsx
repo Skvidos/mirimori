@@ -7,7 +7,7 @@ function NavBar() {
     { label: "Рецензии", link: "/reviews" },
     { label: "Пользователи", link: "/users" },
     { label: "Новости", link: "/news" },
-    { label: "О сайте", link: "#" },
+    { label: "О сайте", link: "/about" },
   ];
   return (
     <nav className="Nav-bar">
