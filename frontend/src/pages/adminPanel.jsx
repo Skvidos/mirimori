@@ -17,7 +17,6 @@ function AdminPanel() {
     { id: "contentModeration", label: "Модерация контента" },
     { id: "addAnime", label: "Добавление аниме", onlyMods: true },
     { id: "addNews", label: "Добавление новостей" },
-    { id: "siteSettings", label: "Настройки сайта" },
   ];
 
   return (

@@ -15,8 +15,6 @@ function Settings() {
   const avatarInputRef = useRef(null);
   const [saving, setSaving] = useState(false);
 
-  console.log(user);
-
   useEffect(() => {
     setUsername(user.username || "");
     setAge(user.age || "");

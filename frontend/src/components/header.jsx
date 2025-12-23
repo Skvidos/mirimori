@@ -71,7 +71,7 @@ function Header() {
                       Настройки
                     </Link>
 
-                    {isAdmin && (
+                    {!!isAdmin && (
                       <Link to="/adminPanel" className="User-dropdown-button">
                         Админ панель
                       </Link>

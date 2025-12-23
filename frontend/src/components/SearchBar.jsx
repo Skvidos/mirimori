@@ -47,7 +47,7 @@ export default function SearchBar() {
       {showDropdown && results.length > 0 && (
         <ul className="Searchbar-results">
           {results.map((item) => (
-            <li
+            <div
               key={item.id}
               className="Searchbar-item"
               onClick={() => (window.location.href = `/anime/${item.id}`)}
@@ -62,7 +62,7 @@ export default function SearchBar() {
               {item.title_en && (
                 <span className="Searchbar-subtitle">({item.title_en})</span>
               )}
-            </li>
+            </div>
           ))}
         </ul>
       )}

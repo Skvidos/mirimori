@@ -135,7 +135,7 @@ app.get("/api/users", (req, res) => {
       u.avatar_url,
       u.email,
       u.age,
-      u.sex
+      u.sex,
       CASE 
         WHEN u.isAdmin = 1 THEN 'Admin'
         WHEN u.isMods = 1 THEN 'Moderator'
@@ -1340,7 +1340,6 @@ app.get("/api/users/:id/anime/export", (req, res) => {
     INNER JOIN anime a ON ul.item_id = a.id 
     WHERE ul.user_id = ? 
       AND ul.item_type = 'anime'
-      AND (ul.status = 'completed' OR (ul.status = 'watching' AND ul.progress >= 50))  -- Фильтр "просмотренных"
     ORDER BY ul.added_at DESC
   `;
 
