@@ -6,7 +6,7 @@ function NavBar() {
     { label: "Манга", link: "/manga" },
     { label: "Рецензии", link: "/reviews" },
     { label: "Пользователи", link: "/users" },
-    { label: "Новости", link: "#" },
+    { label: "Новости", link: "/news" },
     { label: "О сайте", link: "#" },
   ];
   return (

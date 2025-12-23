@@ -12,6 +12,7 @@ import AnimeList from './pages/animeList';
 import MangaList from './pages/mangaList';
 import ReviewList from './pages/reviewList';
 import UsersList from './pages/usersList';
+import News from './pages/news';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -45,6 +46,7 @@ function App() {
         <Route path="/users" element={<UsersList />} />
         <Route path="/anime/:id" element={<AnimePage />} />
         <Route path="/user/:id" element={<UserPage />} />
+        <Route path="/news" element={<News />} />
         <Route path="/adminPanel" element={
           <ProtectedRoute user={user}><AdminPanel /></ProtectedRoute>
         } />

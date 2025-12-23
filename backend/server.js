@@ -177,8 +177,8 @@ app.get("/api/users", (req, res) => {
     db.query(
       sql,
       [
-        currentUserId, // для friend_id = ?
-        currentUserId, // для user_id = ?
+        currentUserId,
+        currentUserId,
         search,
         search,
         limit,
@@ -200,67 +200,6 @@ app.get("/api/users", (req, res) => {
     );
   });
 });
-
-
-// app.get("/api/users", (req, res) => {
-//   const page = parseInt(req.query.page) || 1;
-//   const limit = parseInt(req.query.limit) || 20;
-//   const search = req.query.q ? `%${req.query.q}%` : "%";
-//   const offset = (page - 1) * limit;
-
-//   const sql = `
-//     SELECT 
-//       id,
-//       username,
-//       avatar_url,
-//       email,
-//       CASE 
-//         WHEN isAdmin = 1 THEN 'Admin'
-//         WHEN isMods = 1 THEN 'Moderator'
-//         ELSE 'User'
-//       END AS role,
-//       (
-//         SELECT 
-//           status 
-//         FROM friends 
-//       )
-//     FROM users
-//     WHERE username LIKE ? OR email LIKE ?
-//     ORDER BY id DESC
-//     LIMIT ? OFFSET ?
-//   `;
-
-//   const countSql = `
-//     SELECT COUNT(*) AS total
-//     FROM users
-//     WHERE username LIKE ? OR email LIKE ?
-//   `;
-
-//   db.query(countSql, [search, search], (err, countResult) => {
-//     if (err) {
-//       console.error("Ошибка получения количества пользователей:", err);
-//       return res.status(500).json({ error: "Ошибка сервера" });
-//     }
-
-//     const total = countResult[0].total;
-//     const totalPages = Math.ceil(total / limit);
-
-//     db.query(sql, [search, search, limit, offset], (err, results) => {
-//       if (err) {
-//         console.error("Ошибка получения списка пользователей:", err);
-//         return res.status(500).json({ error: "Ошибка при получении данных" });
-//       }
-
-//       res.json({
-//         data: results,
-//         page,
-//         totalPages,
-//         total,
-//       });
-//     });
-//   });
-// });
-
 
 app.get("/api/users/:id", (req, res) => {
   const userId = req.params.id;
@@ -725,20 +664,81 @@ app.get("/api/anime/:animeId/average-rating", (req, res) => {
   });
 });
 
+// app.get("/api/news", (req, res) => {
+//   const q = req.query.q || "";
+//   let sql = "SELECT * FROM news";
+//   const params = [];
+//   if (q) {
+//     sql += " WHERE title LIKE ?";
+//     params.push(`%${q}%`);
+//   }
+//   sql += " ORDER BY created_at DESC";
+//   db.query(sql, params, (err, results) => {
+//     if (err) return res.status(500).json({ error: "Ошибка" });
+//     res.json(results);
+//   });
+// });
+
 app.get("/api/news", (req, res) => {
-  const q = req.query.q || "";
-  let sql = "SELECT * FROM news";
-  const params = [];
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 10;
+  let q = req.query.q || "";
+
+  const offset = (page - 1) * limit;
+
+  let baseWhere = "";
+  let paramsWhere = [];
+
   if (q) {
-    sql += " WHERE title LIKE ?";
-    params.push(`%${q}%`);
+    baseWhere = `
+      WHERE 
+        news.title LIKE ? OR
+        news.content LIKE ?
+    `;
+    paramsWhere.push(`%${q}%`, `%${q}%`);
   }
-  sql += " ORDER BY created_at DESC";
-  db.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ error: "Ошибка" });
-    res.json(results);
+
+  const countSql = `
+    SELECT COUNT(*) AS total
+    FROM news
+    ${baseWhere}
+  `;
+
+  db.query(countSql, paramsWhere, (err, countResult) => {
+    if (err) {
+      console.error("Ошибка COUNT:", err);
+      return res.status(500).json({ error: "Ошибка подсчёта" });
+    }
+
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / limit);
+
+    const selectSql = `
+      SELECT 
+        news.*
+      FROM news
+      ${baseWhere}
+      ORDER BY news.created_at DESC
+      LIMIT ? OFFSET ?
+    `;
+
+    const paramsSelect = [...paramsWhere, limit, offset];
+
+    db.query(selectSql, paramsSelect, (err, results) => {
+      if (err) {
+        console.error("Ошибка SELECT:", err);
+        return res.status(500).json({ error: "Ошибка получения данных" });
+      }
+
+      res.json({
+        data: results,
+        total,
+        totalPages,
+      });
+    });
   });
 });
+
 
 
 app.post("/api/news/add", uploadImage.single("image"), (req, res) => {
